@@ -1,6 +1,6 @@
 
 
-this great plugin was created by https://github.com/DreamMaoMao/hycov, thank you for the great work
+## This is a pluin fork originaly created by https://github.com/DreamMaoMao/hycov
 
 ## hypershell
 client overview for hyprland
