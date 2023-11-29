@@ -3,8 +3,7 @@
 this great plugin was made by https://github.com/DreamMaoMao/hycov, thank you for the great work
 
 ## hypershell
-
-clients overview for hyprland plugin
+client overview for hyprland
 
 
 ### Manual Installation
