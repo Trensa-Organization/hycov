@@ -1,6 +1,6 @@
 
 
-## This is a pluin fork originaly created by https://github.com/DreamMaoMao/hycov
+This is a pluin fork originaly created by https://github.com/DreamMaoMao/hycov
 
 ## hypershell
 client overview for hyprland
