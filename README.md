@@ -28,8 +28,10 @@ $ bash install.sh # `libhycov.so` path: /usr/lib/libhycov.so
 
 ```
 # when enter overview, you can use letf-button to jump,right-button to kill or use keybind
+
 #use this for a while, this plugin have trouble using plugin = /usr/lib/libhycov.so which will crash hyprland
 exec-once=sleep 4;hyprctl plugin load /usr/lib/libhycov.so
+
 bind = CTRL_ALT,h,hycov:enteroverview
 bind = CTRL_ALT,m,hycov:leaveoverview
 bind = CTRL_ALT,k,hycov:toggleoverview
