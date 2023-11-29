@@ -1,20 +1,10 @@
-## hycov
+## hypershell
 
 clients overview for hyprland plugin
 
 
-
-https://github.com/DreamMaoMao/hycov/assets/30348075/59121362-21a8-4143-be95-72ce79ee8e95
-
-
-
-Welcome to fork, if you improve the hycov plugin, please let me know, I will be happy to use your fork.
-
 ### Manual Installation
-
-_only support hyprland sourc code after the date(2023-10-22)_,
-
-Because this plug-in require a [commit](https://github.com/hyprwm/Hyprland/commit/a61eb7694df25a75f45502ed64b1536fda370c1d) in hyprland(was commited in 2023-10-21)
+tested with lastest hyprland version
 
 ##### use meson and ninja:
 
