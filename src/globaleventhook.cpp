@@ -17,6 +17,9 @@ typedef void (*origOnWindowRemovedTiling)(void*, CWindow *pWindow);
 static double gesture_dx,gesture_previous_dx;
 static double gesture_dy,gesture_previous_dy;
 
+bool FullScreenMaximized = true;
+
+
 static void hkOnSwipeUpdate(void* thisptr, wlr_pointer_swipe_update_event* e) {
   if(g_isOverView){
     gesture_dx = gesture_dx + e->dx;
@@ -84,8 +87,23 @@ static void toggle_hotarea(int x_root, int y_root)
       y_root <= (m_y + m_height))
   {
     hycov_log(LOG,"cursor enter hotarea");
-    dispatch_toggleoverview(arg);
-    g_isInHotArea = true;
+    //dispatch_toggleoverview(arg);
+
+    //hotcorner will switch window state for maximized or fullscreen
+
+
+    if(!g_pCompositor->m_pLastWindow->m_bIsFullscreen || FullScreenMaximized == true){
+        g_pCompositor->setWindowFullscreen(g_pCompositor->m_pLastWindow, false, FULLSCREEN_FULL);
+        g_pCompositor->setWindowFullscreen(g_pCompositor->m_pLastWindow, true, FULLSCREEN_FULL);
+        FullScreenMaximized = false;
+        g_isInHotArea = true;
+    } else {
+        g_pCompositor->setWindowFullscreen(g_pCompositor->m_pLastWindow, false, FULLSCREEN_FULL);
+        g_pCompositor->setWindowFullscreen(g_pCompositor->m_pLastWindow, true, FULLSCREEN_MAXIMIZED);
+        FullScreenMaximized = true;
+        g_isInHotArea = true;
+    }
+    
   }
   else if (g_isInHotArea &&
            (y_root <= hy || x_root >= hx || x_root < m_x ||
@@ -95,6 +113,68 @@ static void toggle_hotarea(int x_root, int y_root)
       g_isInHotArea = false;
   }
 }
+
+void moveActiveToWorkspace(std::string args) {
+
+    CWindow* PWINDOW = nullptr;
+
+    if (args.contains(',')) {
+        PWINDOW = g_pCompositor->getWindowByRegex(args.substr(args.find_last_of(',') + 1));
+        args    = args.substr(0, args.find_last_of(','));
+    } else {
+        PWINDOW = g_pCompositor->m_pLastWindow;
+    }
+
+    if (!PWINDOW)
+        return;
+
+    // hack
+    std::string workspaceName;
+    const auto  WORKSPACEID = getWorkspaceIDFromString(args, workspaceName);
+
+    if (WORKSPACEID == WORKSPACE_INVALID) {
+        Debug::log(LOG, "Invalid workspace in moveActiveToWorkspace");
+        return;
+    }
+
+    if (WORKSPACEID == PWINDOW->m_iWorkspaceID) {
+        Debug::log(LOG, "Not moving to workspace because it didn't change.");
+        return;
+    }
+
+    auto               pWorkspace            = g_pCompositor->getWorkspaceByID(WORKSPACEID);
+    CMonitor*          pMonitor              = nullptr;
+    const auto         POLDWS                = g_pCompositor->getWorkspaceByID(PWINDOW->m_iWorkspaceID);
+    static auto* const PALLOWWORKSPACECYCLES = &g_pConfigManager->getConfigValuePtr("binds:allow_workspace_cycles")->intValue;
+
+    g_pHyprRenderer->damageWindow(PWINDOW);
+
+    if (pWorkspace) {
+        g_pCompositor->moveWindowToWorkspaceSafe(PWINDOW, pWorkspace);
+        pMonitor = g_pCompositor->getMonitorFromID(pWorkspace->m_iMonitorID);
+        g_pCompositor->setActiveMonitor(pMonitor);
+    } else {
+        pWorkspace = g_pCompositor->createNewWorkspace(WORKSPACEID, PWINDOW->m_iMonitorID, workspaceName);
+        pMonitor   = g_pCompositor->getMonitorFromID(pWorkspace->m_iMonitorID);
+        g_pCompositor->moveWindowToWorkspaceSafe(PWINDOW, pWorkspace);
+    }
+
+    POLDWS->m_pLastFocusedWindow = g_pCompositor->getFirstWindowOnWorkspace(POLDWS->m_iID);
+
+    if (pWorkspace->m_bIsSpecialWorkspace)
+        pMonitor->setSpecialWorkspace(pWorkspace);
+    else if (POLDWS->m_bIsSpecialWorkspace)
+        g_pCompositor->getMonitorFromID(POLDWS->m_iMonitorID)->setSpecialWorkspace(nullptr);
+
+    pMonitor->changeWorkspace(pWorkspace);
+
+    g_pCompositor->focusWindow(PWINDOW);
+    g_pCompositor->warpCursorTo(PWINDOW->middle());
+
+    if (*PALLOWWORKSPACECYCLES)
+        pWorkspace->rememberPrevWorkspace(POLDWS);
+}
+
 
 static void mouseMoveHook(void *, SCallbackInfo &info, std::any data)
 {
@@ -116,14 +196,33 @@ static void mouseButtonHook(void *, SCallbackInfo &info, std::any data)
       info.cancelled = true;
     }
     break;
-  case BTN_RIGHT:
+
+
+
+  case BTN_MIDDLE:
     if (g_isOverView && pEvent->state == WLR_BUTTON_PRESSED)
     {
-      g_pHyprRenderer->damageWindow(g_pCompositor->m_pLastWindow);
-      g_pCompositor->closeWindow(g_pCompositor->m_pLastWindow);
+       const auto PMONITORTOCHANGETOLEFT = g_pCompositor->getMonitorInDirection('l');
+       const auto PMONITORTOCHANGETORIGHT = g_pCompositor->getMonitorInDirection('r');
+      
+
+        if (!PMONITORTOCHANGETOLEFT && !PMONITORTOCHANGETORIGHT)
+          return;
+
+
+       if (!PMONITORTOCHANGETOLEFT) {   
+          const auto PWORKSPACERIGHT = g_pCompositor->getWorkspaceByID(PMONITORTOCHANGETORIGHT->activeWorkspace);    
+          moveActiveToWorkspace(PWORKSPACERIGHT->getConfigName());
+          info.cancelled = true;
+          return;
+       }
+
+      const auto PWORKSPACELEFT = g_pCompositor->getWorkspaceByID(PMONITORTOCHANGETOLEFT->activeWorkspace); 
+      moveActiveToWorkspace(PWORKSPACELEFT->getConfigName());
       info.cancelled = true;
     }
     break;
+
   }
 }
 

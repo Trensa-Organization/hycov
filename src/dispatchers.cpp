@@ -40,7 +40,7 @@ CWindow  *direction_select(std::string arg){
 
     for (auto &w : g_pCompositor->m_vWindows)
     {
-        if (pTempClient == w.get() || pTempClient->m_iWorkspaceID !=w.get()->m_iWorkspaceID || w->isHidden() || !w->m_bIsMapped || w->m_bFadingOut || w->m_bIsFullscreen)
+        if (pTempClient == w.get() || pTempClient->m_iWorkspaceID != w.get()->m_iWorkspaceID || w->isHidden() || !w->m_bIsMapped || w->m_bFadingOut || w->m_bIsFullscreen)
             continue;
 			last++;
 			pTempCWindows[last] = w.get();			
@@ -339,6 +339,7 @@ void dispatch_leaveoverview(std::string arg)
 	CWindow *pActiveWindow = g_pCompositor->m_pLastWindow;
 	g_pCompositor->focusWindow(nullptr);
 	g_pLayoutManager->switchToLayout(*configLayoutName);
+	
 
 	//Preserve window focus
 	if(pActiveWindow){
@@ -351,17 +352,16 @@ void dispatch_leaveoverview(std::string arg)
 		g_pCompositor->focusWindow(node.pWindow);
 	}
 	
+
+	//makes all windows fullscreen
 	for (auto &n : g_GridLayout->m_lGridNodesData)
 	{
-		//make all fullscrenn windwo restore it's status
-		if (n.ovbk_windowIsFullscreen)
-		{
 			if (n.pWindow != g_pCompositor->m_pLastWindow && n.pWindow->m_iWorkspaceID == g_pCompositor->m_pLastWindow->m_iWorkspaceID)
 			{
 				continue;
 			}	
-			g_pCompositor->setWindowFullscreen(n.pWindow, true, n.ovbk_windowFullscreenMode );
-		}
+			g_pCompositor->setWindowFullscreen(n.pWindow, true, FULLSCREEN_MAXIMIZED );
+
 	}
 
 	//clean overview layout node date

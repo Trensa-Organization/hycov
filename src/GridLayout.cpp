@@ -39,7 +39,7 @@ void GridLayout::onWindowCreatedTiling(CWindow *pWindow, eDirection direction)
 
     const auto pNode = &m_lGridNodesData.emplace_back(); // make a new node in list back
 
-    const auto pActiveWorkspace = g_pCompositor->getWorkspaceByID(pMonitor->activeWorkspace); 
+    const auto pActiveWorkspace = g_pCompositor->getWorkspaceByID(g_pCompositor->m_pLastMonitor->activeWorkspace);
 
     const auto pWindowOriWorkspace = g_pCompositor->getWorkspaceByID(pWindow->m_iWorkspaceID);
 
@@ -57,11 +57,11 @@ void GridLayout::onWindowCreatedTiling(CWindow *pWindow, eDirection direction)
     pNode->ovbk_windowWorkspaceName = pWindowOriWorkspace->m_szName;
 
     //change all client workspace to active worksapce 
-    if (pWindowOriWorkspace->m_iID != pActiveWorkspace->m_iID || pWindowOriWorkspace->m_szName != pActiveWorkspace->m_szName)
-    {
-        pNode->workspaceID = pWindow->m_iWorkspaceID = pActiveWorkspace->m_iID;
-        pNode->workspaceName = pActiveWorkspace->m_szName;
-    }
+     //if (pWindowOriWorkspace->m_iID != pActiveWorkspace->m_iID || pWindowOriWorkspace->m_szName != pActiveWorkspace->m_szName)
+    //{
+     //   pNode->workspaceID = pWindow->m_iWorkspaceID = pActiveWorkspace->m_iID;
+    //    pNode->workspaceName = pActiveWorkspace->m_szName;
+    //}
 
     // clean fullscreen status
     if (pWindow->m_bIsFullscreen)
@@ -239,7 +239,7 @@ void GridLayout::applyNodeDataToWindow(SGridNodeData *pNode)
     g_pXWaylandManager->setWindowSize(pWindow, calcSize);
 
     pWindow->updateWindowDecos();
-    // g_pCompositor->focusWindow(pWindow);
+    //g_pCompositor->focusWindow(pWindow);
 }
 
 void GridLayout::recalculateWindow(CWindow *pWindow)
@@ -297,46 +297,47 @@ void GridLayout::changeToActivceSourceWorkspace()
 {
     CWindow *pWindow = nullptr;
     SGridNodeData *pNode;
-    CWorkspace *pWorksapce;
-    hycov_log(LOG,"changeToActivceSourceWorkspace");
+    CWorkspace *pWorkspace;
     pWindow = g_pCompositor->m_pLastWindow;
-    const auto pMonitor = g_pCompositor->getMonitorFromID(pWindow->m_iMonitorID); 
+    const auto pMonitor = g_pCompositor->getMonitorFromID(pWindow->m_iMonitorID);
+    
     pNode = getNodeFromWindow(pWindow);
     if(pNode) {
-        pWorksapce = g_pCompositor->getWorkspaceByID(pNode->ovbk_windowWorkspaceId); 
+        pWorkspace = g_pCompositor->getWorkspaceByID(pNode->ovbk_windowWorkspaceId); 
         pMonitor->activeWorkspace = pNode->ovbk_windowWorkspaceId;
-    } else {
-        pWorksapce = g_pCompositor->getWorkspaceByID(pWindow->m_iWorkspaceID); 
+
+    } 
+    
+    else {
+        pWorkspace = g_pCompositor->getWorkspaceByID(pWindow->m_iWorkspaceID); 
         pMonitor->activeWorkspace = pWindow->m_iWorkspaceID;        
     }
-    pMonitor->changeWorkspace(pWorksapce);
-    hycov_log(LOG,"changeToWorkspace:{}",pWorksapce->m_iID);
-    g_pEventManager->postEvent(SHyprIPCEvent{"workspace", pWorksapce->m_szName});
-    EMIT_HOOK_EVENT("workspace", pWorksapce);
-    // g_pCompositor->focusWindow(pWindow);
+                   
+    pMonitor->changeWorkspace(pWorkspace);
+    g_pEventManager->postEvent(SHyprIPCEvent{"workspace", pWorkspace->m_szName});
+    EMIT_HOOK_EVENT("workspace", pWorkspace);
+    //g_pCompositor->focusWindow(pWindow);
 }
 
 void GridLayout::moveWindowToSourceWorkspace()
 {
     CWorkspace *pWorkspace;
     
-    hycov_log(LOG,"moveWindowToSourceWorkspace");
-
     for (auto &nd : m_lGridNodesData)
     {
         if (nd.pWindow && (nd.pWindow->m_iWorkspaceID != nd.ovbk_windowWorkspaceId || nd.workspaceName != nd.ovbk_windowWorkspaceName ))
         {
             pWorkspace = g_pCompositor->getWorkspaceByID(nd.ovbk_windowWorkspaceId);
-            if (!pWorkspace){
-                hycov_log(LOG,"source workspace no exist");
-                pWorkspace = g_pCompositor->createNewWorkspace(nd.ovbk_windowWorkspaceId, nd.pWindow->m_iMonitorID,nd.ovbk_windowWorkspaceName);
-                hycov_log(LOG,"create workspace: id:{} name:{}",nd.ovbk_windowWorkspaceId,nd.ovbk_windowWorkspaceName);
-            }
+            if (!pWorkspace)
+               pWorkspace = g_pCompositor->createNewWorkspace(nd.ovbk_windowWorkspaceId, nd.pWindow->m_iMonitorID,nd.ovbk_windowWorkspaceName);
+
+    
             nd.workspaceID = nd.pWindow->m_iWorkspaceID = nd.ovbk_windowWorkspaceId;
             nd.workspaceName = nd.ovbk_windowWorkspaceName;
             nd.pWindow->m_vPosition = nd.ovbk_position;
             nd.pWindow->m_vSize = nd.ovbk_size;
             g_pHyprRenderer->damageWindow(nd.pWindow);
+            
         }
     }
 }
