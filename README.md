@@ -1,6 +1,9 @@
-## hypershell
 
-clients overview for hyprland plugin
+
+This is a plugin fork originaly created by https://github.com/DreamMaoMao/hycov
+
+## hypershell
+client overview for hyprland
 
 
 ### Manual Installation
@@ -9,7 +12,7 @@ tested with lastest hyprland version along with ags
 ##### use meson and ninja:
 
 ```console
-$ git clone https://github.com/DreamMaoMao/hycov.git
+$ git clone https://github.com/killown/hypershell.git
 $ cd hycov
 $ sudo meson setup build --prefix=/usr
 $ sudo ninja -C build
@@ -19,7 +22,7 @@ $ sudo ninja -C build install # `libhycov.so` path: /usr/lib/libhycov.so
 ##### use cmake:
 
 ```console
-$ git clone https://github.com/DreamMaoMao/hycov.git
+$ git clone https://github.com/killown/hypershell.git
 $ cd hycov
 $ bash install.sh # `libhycov.so` path: /usr/lib/libhycov.so
 ```
@@ -28,7 +31,10 @@ $ bash install.sh # `libhycov.so` path: /usr/lib/libhycov.so
 
 ```
 # when enter overview, you can use letf-button to jump,right-button to kill or use keybind
-plugin = /path/to/libhycov.so
+
+#use this for a while, the plugin fork have trouble using plugin = /usr/lib/libhycov.so which will crash hyprland
+exec-once=sleep 4; hyprctl plugin load /usr/lib/libhycov.so
+
 bind = CTRL_ALT,h,hycov:enteroverview
 bind = CTRL_ALT,m,hycov:leaveoverview
 bind = CTRL_ALT,k,hycov:toggleoverview
@@ -41,8 +47,7 @@ bind=ALT,right,hycov:movefocus,r
 bind=ALT,up,hycov:movefocus,u
 bind=ALT,down,hycov:movefocus,d
 
-#use this for a while, this plugin have trouble using plugin = /usr/lib/libhycov.so which will crash hyprland
-exec-once=sleep 4;hyprctl plugin load /usr/lib/libhycov.so
+
 
 
 plugin {
@@ -61,5 +66,4 @@ plugin {
 }
 
 ```
-
 
