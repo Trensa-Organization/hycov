@@ -1,14 +1,13 @@
 #include <hyprland/src/Compositor.hpp>
 #include <hyprland/src/plugins/PluginAPI.hpp>
 #include <regex>
+#include <xkbcommon/xkbcommon.h>
 #include <set>
-
 #include "dispatchers.hpp"
 #include "globals.hpp"
 #include "GridLayout.hpp"
 
-// std::unique_ptr<HOOK_CALLBACK_FN> mouseMoveHookPtr = std::make_unique<HOOK_CALLBACK_FN>(mouseMoveHook);
-// std::unique_ptr<HOOK_CALLBACK_FN> mouseButtonHookPtr = std::make_unique<HOOK_CALLBACK_FN>(mouseButtonHook);
+
 typedef void (*origOnSwipeBegin)(void*, wlr_pointer_swipe_begin_event* e);
 typedef void (*origOnSwipeEnd)(void*, wlr_pointer_swipe_end_event* e);
 typedef void (*origOnSwipeUpdate)(void*, wlr_pointer_swipe_update_event* e);
@@ -18,6 +17,7 @@ static double gesture_dx,gesture_previous_dx;
 static double gesture_dy,gesture_previous_dy;
 
 bool FullScreenMaximized = true;
+
 
 
 static void hkOnSwipeUpdate(void* thisptr, wlr_pointer_swipe_update_event* e) {
@@ -48,7 +48,7 @@ static void hkOnSwipeUpdate(void* thisptr, wlr_pointer_swipe_update_event* e) {
 
 static void hkOnSwipeBegin(void* thisptr, wlr_pointer_swipe_begin_event* e) {
   if(e->fingers == g_swipe_fingers){
-    g_isGestureBegin = true;
+   g_isGestureBegin = true;
     return;
   } 
   hycov_log(LOG,"OnSwipeBegin hook toggle");
@@ -78,6 +78,7 @@ static void toggle_hotarea(int x_root, int y_root)
   auto m_x = pMonitor->vecPosition.x;
   auto m_y = pMonitor->vecPosition.y;
   auto m_height = pMonitor->vecSize.y;
+
 
   int hx = m_x + g_hotarea_size;
   int hy = m_y + m_height - g_hotarea_size;
@@ -185,8 +186,10 @@ static void mouseMoveHook(void *, SCallbackInfo &info, std::any data)
 
 static void mouseButtonHook(void *, SCallbackInfo &info, std::any data)
 {
-  wlr_pointer_button_event *pEvent = std::any_cast<wlr_pointer_button_event *>(data); // 这个事件的数据解析可以参考dwl怎么解析出是哪个按键的
+  wlr_pointer_button_event *pEvent = std::any_cast<wlr_pointer_button_event *>(data); 
   info.cancelled = false;
+
+
   switch (pEvent->button)
   {
   case BTN_LEFT:
@@ -226,6 +229,51 @@ static void mouseButtonHook(void *, SCallbackInfo &info, std::any data)
   }
 }
 
+
+static void keyPressHook(void* key_event, SCallbackInfo &info, std::any data)
+{
+ 
+     const auto DATA = std::any_cast<std::unordered_map<std::string, std::any>>(data);
+     const auto PKEYBOARD = std::any_cast<SKeyboard*>(DATA.at("keyboard"));
+     const auto state = wlr_keyboard_from_input_device(PKEYBOARD->keyboard)->xkb_state;
+     const auto e = std::any_cast<wlr_keyboard_key_event*>(DATA.at("event"));
+
+     if(!PKEYBOARD->enabled){
+          return;
+     }
+
+     if (xkb_state_key_get_one_sym(state, e->keycode) == 0 && g_isOverView){ //keycode 0 == ESC
+            dispatch_toggleoverview("");
+            info.cancelled = true;
+      }      
+}
+
+
+
+static void mouseAxisHook(void* self, SCallbackInfo &info, std::any data)
+{
+   const auto DATA = std::any_cast<std::unordered_map<std::string, std::any>>(data);
+   const auto e = std::any_cast<wlr_pointer_axis_event*>(DATA.at("event"));
+
+  //mouse wheel up, need implementation to move active window to workspace right
+  if (e->source == WLR_AXIS_SOURCE_WHEEL && e->orientation == WLR_AXIS_ORIENTATION_VERTICAL && g_isOverView) {
+      if (e->delta < 0){
+          dispatch_toggleoverview("");
+          info.cancelled = true;
+     }
+  }
+  
+  //mouse wheel down, mouse wheel up, need implementation to move active window to workspace left
+  if (e->source == WLR_AXIS_SOURCE_WHEEL && e->orientation == WLR_AXIS_ORIENTATION_HORIZONTAL && g_isOverView) {
+      if (e->delta < 0){
+          dispatch_toggleoverview("");
+          info.cancelled = true;
+     }
+  }
+ 
+}
+
+
 static void hkOnWindowRemovedTiling(void* thisptr, CWindow *pWindow) {
   (*(origOnWindowRemovedTiling)g_pOnWindowRemovedTilingHook->m_pOriginal)(thisptr, pWindow);
 
@@ -257,9 +305,7 @@ void registerGlobalEventHook()
   gesture_previous_dx = 0;
   gesture_previous_dy = 0;
   
-  // HyprlandAPI::registerCallbackStatic(PHANDLE, "mouseMove", mouseMoveHookPtr.get());
-  // HyprlandAPI::registerCallbackStatic(PHANDLE, "mouseButton", mouseButtonHookPtr.get());
-  //create public function hook
+
   g_pOnSwipeBeginHook = HyprlandAPI::createFunctionHook(PHANDLE, (void*)&CInputManager::onSwipeBegin, (void*)&hkOnSwipeBegin);
   g_pOnSwipeEndHook = HyprlandAPI::createFunctionHook(PHANDLE, (void*)&CInputManager::onSwipeEnd, (void*)&hkOnSwipeEnd);
   g_pOnSwipeUpdateHook = HyprlandAPI::createFunctionHook(PHANDLE, (void*)&CInputManager::onSwipeUpdate, (void*)&hkOnSwipeUpdate);
@@ -281,7 +327,9 @@ void registerGlobalEventHook()
     HyprlandAPI::registerCallbackDynamic(PHANDLE, "mouseMove",[&](void* self, SCallbackInfo& info, std::any data) { mouseMoveHook(self, info, data); });
     HyprlandAPI::registerCallbackDynamic(PHANDLE, "mouseButton", [&](void* self, SCallbackInfo& info, std::any data) { mouseButtonHook(self, info, data); });
   }
-
+   HyprlandAPI::registerCallbackDynamic(PHANDLE, "mouseAxis", [&](void* self, SCallbackInfo& info, std::any data) { mouseAxisHook(self, info, data); });
+  HyprlandAPI::registerCallbackDynamic(PHANDLE, "keyPress", [&](void* key_event, SCallbackInfo& info, std::any data) { keyPressHook(key_event, info, data); });
+ 
   //enable function hook
   if(g_enable_gesture){
     g_pOnSwipeBeginHook->hook();

@@ -56,7 +56,7 @@ APICALL EXPORT PLUGIN_DESCRIPTION_INFO PLUGIN_INIT(HANDLE handle)
 	registerGlobalEventHook();
 	registerDispatchers();
 
-	return {"hycov", "clients overview", "DreamMaoMao", "0.1"};
+	return {"hypershell", "client overview", "killown", "0.1"};
 }
 
 APICALL EXPORT void PLUGIN_EXIT() {}
