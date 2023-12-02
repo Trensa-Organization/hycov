@@ -225,6 +225,14 @@ static void mouseButtonHook(void *, SCallbackInfo &info, std::any data)
     }
     break;
 
+  case BTN_EXTRA:
+    if (g_isOverView && pEvent->state == WLR_BUTTON_PRESSED && g_enable_mouse_extra_button)
+    {
+      HyprlandAPI::invokeHyprctlCommand("dispatch", "killactive");
+      info.cancelled = true;
+    }
+    break;
+
   case BTN_MIDDLE:
     if (g_isOverView && pEvent->state == WLR_BUTTON_PRESSED)
     {
