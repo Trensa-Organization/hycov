@@ -73,7 +73,7 @@ plugin {
 ##### Features
 - show only windows from active workspace
 - toggle overview with side button
-- kill active window with extra button
-- move active window by pressing the respective workspace number
-- move window between workspaces with mouse middle click in the active window
+- kill focused window with extra button
+- move focused window to another workspace by pressing the workspace number
+- move focused window between workspaces with mouse middle click in the active window
 
