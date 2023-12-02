@@ -71,8 +71,8 @@ plugin {
 
 
 ##### Features
-- Overview windows from active workspace
-- active overview with side button
+- show only windows from active workspace
+- toggle overview with side button
 - kill active window with extra button
 - move active window by pressing the respective workspace number
 - move window between workspaces with mouse middle click in the active window
