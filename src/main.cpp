@@ -13,6 +13,15 @@ APICALL EXPORT PLUGIN_DESCRIPTION_INFO PLUGIN_INIT(HANDLE handle)
 {
 	PHANDLE = handle;
 
+   const std::string HASH = __hyprland_api_get_hash();
+
+    if (HASH != GIT_COMMIT_HASH) {
+        HyprlandAPI::addNotification(PHANDLE, "[hyprwinwrap] Failure in initialization: Version mismatch (headers ver is not equal to running hyprland ver)",
+                                     CColor{1.0, 0.2, 0.2, 1.0}, 5000);
+        throw std::runtime_error("[hww] Version mismatch");
+    }
+
+
 #define CONF(NAME, TYPE, VALUE) \
 	HyprlandAPI::addConfigValue(PHANDLE, "plugin:hycov:" NAME, SConfigValue{.TYPE##Value = VALUE})
 
@@ -20,6 +29,7 @@ APICALL EXPORT PLUGIN_DESCRIPTION_INFO PLUGIN_INIT(HANDLE handle)
 	CONF("overview_gappi", int, 24);
 	CONF("hotarea_size", int, 10);
 	CONF("enable_hotarea", int, 1);
+	CONF("enable_mouse_side_button", int, 1);
 	CONF("swipe_fingers", int, 4);
 	CONF("move_focus_distance", int, 100);
 	CONF("enable_gesture", int, 1);
@@ -31,6 +41,7 @@ APICALL EXPORT PLUGIN_DESCRIPTION_INFO PLUGIN_INIT(HANDLE handle)
 #undef CONF
 
 	static const auto *pEnable_hotarea_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hycov:enable_hotarea")->intValue;
+	static const auto *pEnable_enable_mouse_side_button_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hycov:enable_mouse_side_button")->intValue;
   	static const auto *pHotarea_size_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hycov:hotarea_size")->intValue;
 	static const auto *pSwipe_fingers_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hycov:swipe_fingers")->intValue;
 	static const auto *pMove_focus_distance_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hycov:move_focus_distance")->intValue;
@@ -41,6 +52,7 @@ APICALL EXPORT PLUGIN_DESCRIPTION_INFO PLUGIN_INIT(HANDLE handle)
 
 
 	g_enable_hotarea = *pEnable_hotarea_config;
+	g_enable_mouse_side_button = *pEnable_enable_mouse_side_button_config;
 	g_hotarea_size = *pHotarea_size_config;
 	g_swipe_fingers = *pSwipe_fingers_config;
 	g_move_focus_distance = *pMove_focus_distance_config;
