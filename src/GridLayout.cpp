@@ -122,8 +122,8 @@ void GridLayout::calculateWorkspace(const int &ws)
         return;
 
     static const auto *PBORDERSIZE = &HyprlandAPI::getConfigValue(PHANDLE, "general:border_size")->intValue;
-    static const auto *GAPPO = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hycov:overview_gappo")->intValue;
-    static const auto *GAPPI = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hycov:overview_gappi")->intValue;
+    static const auto *GAPPO = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hypershell:overview_gappo")->intValue;
+    static const auto *GAPPI = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hypershell:overview_gappi")->intValue;
 
     /*
     m is region that is moniotr,

@@ -14,7 +14,7 @@
     in
     {
       packages = withPkgsFor (system: pkgs: {
-        hycov = pkgs.callPackage ./default.nix {
+        hypershell = pkgs.callPackage ./default.nix {
           inherit (hyprland.packages.${system}) hyprland;
           stdenv = pkgs.gcc13Stdenv;
         };

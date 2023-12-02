@@ -1,10 +1,10 @@
-[hycov]
+[hypershell]
 description = "clients overview for hyprland"
 version = "0.1"
 author = "DreamMaoMao"
 
-[hycov.build]
-output = "build/libhycov.so"
+[hypershell.build]
+output = "build/libhypershell.so"
 steps = [
   "rm -rf build",
   "cmake -DCMAKE_BUILD_TYPE=Debug -B build",

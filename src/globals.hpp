@@ -11,6 +11,8 @@ inline std::unique_ptr<GridLayout> g_GridLayout;
 inline bool g_isOverView;
 inline bool g_isInHotArea;
 inline int g_enable_hotarea;
+inline int g_enable_mouse_side_button;
+inline int g_enable_mouse_extra_button;
 inline int g_hotarea_size;
 inline int g_swipe_fingers;
 inline int g_isGestureBegin;

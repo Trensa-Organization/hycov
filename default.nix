@@ -4,7 +4,7 @@
 ,
 }:
 stdenv.mkDerivation {
-  pname = "hycov";
+  pname = "hypershell";
   version = "0.1";
   src = ./.;
 
@@ -13,8 +13,8 @@ stdenv.mkDerivation {
   buildInputs = [ hyprland ] ++ hyprland.buildInputs;
 
   meta = with lib; {
-    homepage = "https://github.com/DreamMaoMao/hycov";
-    description = "clients overview for hyprland plugin";
+    homepage = "https://github.com/killown/hypershell";
+    description = "client overview hyprland plugin";
     license = licenses.mit;
     platforms = platforms.linux;
   };
