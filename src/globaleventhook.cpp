@@ -103,15 +103,15 @@ static void toggle_hotarea(int x_root, int y_root)
 
     if (!g_pCompositor->m_pLastWindow->m_bIsFullscreen || FullScreenMaximized == true)
     {
-      g_pCompositor->setWindowFullscreen(g_pCompositor->m_pLastWindow, false, FULLSCREEN_FULL);
-      g_pCompositor->setWindowFullscreen(g_pCompositor->m_pLastWindow, true, FULLSCREEN_FULL);
+      //g_pCompositor->setWindowFullscreen(g_pCompositor->m_pLastWindow, false, FULLSCREEN_FULL);
+      //g_pCompositor->setWindowFullscreen(g_pCompositor->m_pLastWindow, true, FULLSCREEN_FULL);
       FullScreenMaximized = false;
       g_isInHotArea = true;
     }
     else
     {
-      g_pCompositor->setWindowFullscreen(g_pCompositor->m_pLastWindow, false, FULLSCREEN_FULL);
-      g_pCompositor->setWindowFullscreen(g_pCompositor->m_pLastWindow, true, FULLSCREEN_MAXIMIZED);
+      //g_pCompositor->setWindowFullscreen(g_pCompositor->m_pLastWindow, false, FULLSCREEN_FULL);
+      //g_pCompositor->setWindowFullscreen(g_pCompositor->m_pLastWindow, true, FULLSCREEN_MAXIMIZED);
       FullScreenMaximized = true;
       g_isInHotArea = true;
     }

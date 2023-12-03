@@ -56,12 +56,12 @@ void GridLayout::onWindowCreatedTiling(CWindow *pWindow, eDirection direction)
     pNode->ovbk_windowIsFullscreen = pWindow->m_bIsFullscreen;
     pNode->ovbk_windowWorkspaceName = pWindowOriWorkspace->m_szName;
 
-    //change all client workspace to active worksapce 
-     //if (pWindowOriWorkspace->m_iID != pActiveWorkspace->m_iID || pWindowOriWorkspace->m_szName != pActiveWorkspace->m_szName)
-    //{
-     //   pNode->workspaceID = pWindow->m_iWorkspaceID = pActiveWorkspace->m_iID;
-    //    pNode->workspaceName = pActiveWorkspace->m_szName;
-    //}
+    //change all clients workspace to active worksapce
+     if (pWindowOriWorkspace->m_iID == pActiveWorkspace->m_iID || pWindowOriWorkspace->m_szName == pActiveWorkspace->m_szName)
+    {
+       pNode->workspaceID = pWindow->m_iWorkspaceID = pActiveWorkspace->m_iID;
+       pNode->workspaceName = pActiveWorkspace->m_szName;
+    }
 
     // clean fullscreen status
     if (pWindow->m_bIsFullscreen)
@@ -75,7 +75,11 @@ void GridLayout::onWindowCreatedTiling(CWindow *pWindow, eDirection direction)
         pWindow->updateDynamicRules();
     }
 
-    recalculateMonitor(pWindow->m_iMonitorID);
+
+    // change the layout of overview, 1 use default grid layout, 0 change it
+    if(!g_use_default_layout){
+        recalculateMonitor(pWindow->m_iMonitorID);
+    }
 }
 
 void GridLayout::onWindowRemovedTiling(CWindow *pWindow)
@@ -152,7 +156,7 @@ void GridLayout::calculateWorkspace(const int &ws)
     if (NODECOUNT == 0)
         return;
 
-    // one client arrange
+    // one client
     if (NODECOUNT == 1)
     {
         pNode = pTempNodes[0];
@@ -163,7 +167,7 @@ void GridLayout::calculateWorkspace(const int &ws)
         return;
     }
 
-    // two client arrange
+    // two clients
     if (NODECOUNT == 2)
     {
         pNode = pTempNodes[0];
@@ -176,7 +180,7 @@ void GridLayout::calculateWorkspace(const int &ws)
         return;
     }
 
-    //more than two client arrange
+    //more than two clients
 
     //Calculate the integer part of the square root of the number of nodes
     for (cols = 0; cols <= NODECOUNT / 2; cols++)
@@ -212,14 +216,14 @@ void GridLayout::calculateWorkspace(const int &ws)
 
 void GridLayout::recalculateMonitor(const int &monid)
 {
-    const auto pMonitor = g_pCompositor->getMonitorFromID(monid);                       // 根据monitor id获取monitor对象
-    const auto pWorksapce = g_pCompositor->getWorkspaceByID(pMonitor->activeWorkspace); // 获取当前workspace对象
+    const auto pMonitor = g_pCompositor->getMonitorFromID(monid);                       
+    const auto pWorksapce = g_pCompositor->getWorkspaceByID(pMonitor->activeWorkspace); 
     if (!pWorksapce)
         return;
 
     g_pHyprRenderer->damageMonitor(pMonitor); // Use local rendering
 
-    calculateWorkspace(pWorksapce->m_iID); // calculate windwo's size and position
+    calculateWorkspace(pWorksapce->m_iID); // calculate windows size and position
 }
 
 // set window's size and position

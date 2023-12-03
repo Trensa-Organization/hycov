@@ -192,7 +192,7 @@ void dispatch_toggleoverview(std::string arg)
 
 void dispatch_enteroverview(std::string arg)
 { 
-	//ali clients exit fullscreen status before enter overview
+	//all clients exit fullscreen status before enter overview
 	CWindow *pFullscreenWindow;
 	CWindow *pActiveWindow = g_pCompositor->m_pLastWindow;
 	CWorkspace *pActiveWorkspace;
@@ -214,6 +214,10 @@ void dispatch_enteroverview(std::string arg)
 
 	hypershell_log(LOG,"enter overview");
 	g_isOverView = true;
+
+
+
+
 
 	//make all fullscreen window exit fullscreen state
 	for (auto &w : g_pCompositor->m_vWorkspaces)
