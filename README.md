@@ -50,18 +50,19 @@ bind=ALT,down,hypershell:movefocus,d
 # plugin options
 plugin {
     hypershell {
-        overview_gappo = 60 # gas width from screem
+        overview_gappo = 60 # gas width from screem 
         overview_gappi = 24 # gas width from clients
-        hotarea_size = 100 # hotarea size in bottom l>
-        enable_hotarea = 1 # enable mouse cursor hota>
-        swipe_fingers = 4 # finger number of gesture,>
-        move_focus_distance = 100 # distance for move>
+        hotarea_size = 100 # hotarea size in bottom left,10x10
+        enable_hotarea = 1 # enable mouse cursor hotarea     
+        swipe_fingers = 4 # finger number of gesture, move any directory
+        move_focus_distance = 100 # distance for movefocus,only can use 3 finger to move 
         enable_gesture = 0 # enable gesture
-        disable_workspace_change = 1 # disable worksp>
-        enable_mouse_side_button = 1 # toggle overvie>
-        enable_mouse_extra_button = 1 # kill active w>
-        disable_spawn = 0 # disable bind exec when in>
-        auto_exit = 1 # enable auto exit when no clie>
+        disable_workspace_change = 1 # disable workspace change when in overview mode
+        enable_mouse_side_button = 1 # toggle overview with mouse side button
+        enable_mouse_extra_button = 1 # kill active window
+        disable_spawn = 0 # disable bind exec when in overview mode
+        use_default_layout = 0 # if 1, will use default grid layout
+        auto_exit = 1 # enable auto exit when no client in overview
     }
 }
 
