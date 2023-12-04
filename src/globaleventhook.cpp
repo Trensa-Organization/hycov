@@ -268,7 +268,7 @@ static void moveWorkspaceWithHyprctl(std::string num)
 // keyboard implementation, handle keypress events
 static void keyPressHook(void *key_event, SCallbackInfo &info, std::any data)
 {
-  if (g_isOverView)
+  if (g_isOverView && g_enable_keypress)
   {
     const auto DATA = std::any_cast<std::unordered_map<std::string, std::any>>(data);
     const auto PKEYBOARD = std::any_cast<SKeyboard *>(DATA.at("keyboard"));
@@ -292,42 +292,51 @@ static void keyPressHook(void *key_event, SCallbackInfo &info, std::any data)
     if (e->keycode == 2)
     {
       moveWorkspaceWithHyprctl("1");
+      info.cancelled = true;
     }
 
     if (e->keycode == 3)
     {
       moveWorkspaceWithHyprctl("2");
+      info.cancelled = true;
     }
     if (e->keycode == 4)
     {
       moveWorkspaceWithHyprctl("3");
+      info.cancelled = true;
     }
 
     if (e->keycode == 5)
     {
       moveWorkspaceWithHyprctl("4");
+      info.cancelled = true;
     }
     if (e->keycode == 6)
     {
       moveWorkspaceWithHyprctl("5");
+      info.cancelled = true;
     }
 
     if (e->keycode == 7)
     {
       moveWorkspaceWithHyprctl("6");
+      info.cancelled = true;
     }
     if (e->keycode == 8)
     {
       moveWorkspaceWithHyprctl("7");
+      info.cancelled = true;
     }
 
     if (e->keycode == 9)
     {
       moveWorkspaceWithHyprctl("8");
+      info.cancelled = true;
     }
     if (e->keycode == 10)
     {
       moveWorkspaceWithHyprctl("9");
+      info.cancelled = true;
     }
   }
 }
