@@ -1,5 +1,5 @@
 [hyprshell]
-description = "clients overview for hyprland"
+description = "window overview for hyprland"
 version = "0.1"
 author = "killown"
 
