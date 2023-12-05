@@ -23,7 +23,7 @@ APICALL EXPORT PLUGIN_DESCRIPTION_INFO PLUGIN_INIT(HANDLE handle)
 
 
 #define CONF(NAME, TYPE, VALUE) \
-	HyprlandAPI::addConfigValue(PHANDLE, "plugin:hypershell:" NAME, SConfigValue{.TYPE##Value = VALUE})
+	HyprlandAPI::addConfigValue(PHANDLE, "plugin:hyprshell:" NAME, SConfigValue{.TYPE##Value = VALUE})
 
 	CONF("overview_gappo", int, 60);
 	CONF("overview_gappi", int, 24);
@@ -43,18 +43,18 @@ APICALL EXPORT PLUGIN_DESCRIPTION_INFO PLUGIN_INIT(HANDLE handle)
 
 #undef CONF
 
-	static const auto *pEnable_hotarea_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hypershell:enable_hotarea")->intValue;
-	static const auto *pEnable_enable_mouse_side_button_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hypershell:enable_mouse_side_button")->intValue;
-	static const auto *pEnable_enable_mouse_extra_button_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hypershell:enable_mouse_extra_button")->intValue;
-	static const auto *pEnable_enable_keypress_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hypershell:enable_keypress")->intValue;
-	static const auto *pEnable_g_use_default_layout = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hypershell:use_default_layout")->intValue;
-  	static const auto *pHotarea_size_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hypershell:hotarea_size")->intValue;
-	static const auto *pSwipe_fingers_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hypershell:swipe_fingers")->intValue;
-	static const auto *pMove_focus_distance_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hypershell:move_focus_distance")->intValue;
-	static const auto *pEnable_gesture_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hypershell:enable_gesture")->intValue;
-	static const auto *pDisable_workspace_change_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hypershell:disable_workspace_change")->intValue;
-	static const auto *pDisable_spawn_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hypershell:disable_spawn")->intValue;
-	static const auto *pAuto_exit_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hypershell:auto_exit")->intValue;
+	static const auto *pEnable_hotarea_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hyprshell:enable_hotarea")->intValue;
+	static const auto *pEnable_enable_mouse_side_button_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hyprshell:enable_mouse_side_button")->intValue;
+	static const auto *pEnable_enable_mouse_extra_button_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hyprshell:enable_mouse_extra_button")->intValue;
+	static const auto *pEnable_enable_keypress_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hyprshell:enable_keypress")->intValue;
+	static const auto *pEnable_g_use_default_layout = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hyprshell:use_default_layout")->intValue;
+  	static const auto *pHotarea_size_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hyprshell:hotarea_size")->intValue;
+	static const auto *pSwipe_fingers_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hyprshell:swipe_fingers")->intValue;
+	static const auto *pMove_focus_distance_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hyprshell:move_focus_distance")->intValue;
+	static const auto *pEnable_gesture_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hyprshell:enable_gesture")->intValue;
+	static const auto *pDisable_workspace_change_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hyprshell:disable_workspace_change")->intValue;
+	static const auto *pDisable_spawn_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hyprshell:disable_spawn")->intValue;
+	static const auto *pAuto_exit_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hyprshell:auto_exit")->intValue;
 
 
 	g_enable_hotarea = *pEnable_hotarea_config;
@@ -77,7 +77,7 @@ APICALL EXPORT PLUGIN_DESCRIPTION_INFO PLUGIN_INIT(HANDLE handle)
 	registerGlobalEventHook();
 	registerDispatchers();
 
-	return {"hypershell", "client overview", "killown", "0.1"};
+	return {"hyprshell", "client overview", "killown", "0.1"};
 }
 
 APICALL EXPORT void PLUGIN_EXIT() {}

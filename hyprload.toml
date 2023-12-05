@@ -1,10 +1,10 @@
-[hypershell]
+[hyprshell]
 description = "clients overview for hyprland"
 version = "0.1"
 author = "DreamMaoMao"
 
-[hypershell.build]
-output = "build/libhypershell.so"
+[hyprshell.build]
+output = "build/libhyprshell.so"
 steps = [
   "rm -rf build",
   "cmake -DCMAKE_BUILD_TYPE=Debug -B build",

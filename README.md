@@ -2,7 +2,7 @@
 
 This is a plugin fork originaly created by https://github.com/DreamMaoMao/hycov
 
-## hypershell
+## hyprshell
 client overview for hyprland
 
 
@@ -12,44 +12,44 @@ tested with lastest hyprland version along with ags
 ##### use meson and ninja:
 
 ```console
-$ git clone https://github.com/killown/hypershell.git
-$ cd hypershell
+$ git clone https://github.com/killown/hyprshell.git
+$ cd hyprshell
 $ sudo meson setup build --prefix=/usr
 $ sudo ninja -C build
-$ sudo ninja -C build install # `libhypershell.so` path: /usr/lib/libhypershell.so
+$ sudo ninja -C build install # `libhyprshell.so` path: /usr/lib/libhyprshell.so
 ```
 
 ##### use cmake:
 
 ```console
-$ git clone https://github.com/killown/hypershell.git
-$ cd hypershell
-$ bash install.sh # `libhypershell.so` path: /usr/lib/libhypershell.so
+$ git clone https://github.com/killown/hyprshell.git
+$ cd hyprshell
+$ bash install.sh # `libhyprshell.so` path: /usr/lib/libhyprshell.so
 ```
 
 ### Usage(hyprland.conf)
 
 ```
 # load the plugin in hyprland.conf
-plugin = /usr/lib/libhypershell.so
+plugin = /usr/lib/libhyprshell.so
 
 # when enter overview, you can use letf-button to jump,right-button to kill or use keybind
-bind = CTRL_ALT,h,hypershell:enteroverview
-bind = CTRL_ALT,m,hypershell:leaveoverview
-bind = CTRL_ALT,k,hypershell:toggleoverview
+bind = CTRL_ALT,h,hyprshell:enteroverview
+bind = CTRL_ALT,m,hyprshell:leaveoverview
+bind = CTRL_ALT,k,hyprshell:toggleoverview
 
 # The direction switch shortcut key binding.
 # calculate the window closest to the direction to switch focus.
 # This keybind is applicable not only to the overview  but also to the general layout
-bind=ALT,left,hypershell:movefocus,l
-bind=ALT,right,hypershell:movefocus,r
-bind=ALT,up,hypershell:movefocus,u
-bind=ALT,down,hypershell:movefocus,d
+bind=ALT,left,hyprshell:movefocus,l
+bind=ALT,right,hyprshell:movefocus,r
+bind=ALT,up,hyprshell:movefocus,u
+bind=ALT,down,hyprshell:movefocus,d
 
 
 # plugin options
 plugin {
-    hypershell {
+    hyprshell {
         overview_gappo = 60 # gas width from screem 
         overview_gappi = 24 # gas width from clients
         hotarea_size = 100 # hotarea size in bottom left,10x10

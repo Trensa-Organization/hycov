@@ -1,4 +1,4 @@
-project('hypershell', 'cpp',
+project('hyprshell', 'cpp',
   version: '0.1',
   default_options: ['buildtype=release'],
 )

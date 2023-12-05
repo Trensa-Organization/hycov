@@ -27,25 +27,25 @@ static void hkOnSwipeUpdate(void *thisptr, wlr_pointer_swipe_update_event *e)
     {
       dispatch_focusdir("r");
       gesture_previous_dx = gesture_dx;
-      hypershell_log(LOG, "OnSwipeUpdate hook focus right");
+      hyprshell_log(LOG, "OnSwipeUpdate hook focus right");
     }
     else if (e->dx < 0 && gesture_previous_dx - gesture_dx > g_move_focus_distance)
     {
       dispatch_focusdir("l");
       gesture_previous_dx = gesture_dx;
-      hypershell_log(LOG, "OnSwipeUpdate hook focus left");
+      hyprshell_log(LOG, "OnSwipeUpdate hook focus left");
     }
     else if (e->dy > 0 && gesture_dy - gesture_previous_dy > g_move_focus_distance)
     {
       dispatch_focusdir("d");
       gesture_previous_dy = gesture_dy;
-      hypershell_log(LOG, "OnSwipeUpdate hook focus down");
+      hyprshell_log(LOG, "OnSwipeUpdate hook focus down");
     }
     else if (e->dy < 0 && gesture_previous_dy - gesture_dy > g_move_focus_distance)
     {
       dispatch_focusdir("u");
       gesture_previous_dy = gesture_dy;
-      hypershell_log(LOG, "OnSwipeUpdate hook focus up");
+      hyprshell_log(LOG, "OnSwipeUpdate hook focus up");
     }
     return;
   }
@@ -59,7 +59,7 @@ static void hkOnSwipeBegin(void *thisptr, wlr_pointer_swipe_begin_event *e)
     g_isGestureBegin = true;
     return;
   }
-  hypershell_log(LOG, "OnSwipeBegin hook toggle");
+  hyprshell_log(LOG, "OnSwipeBegin hook toggle");
   (*(origOnSwipeBegin)g_pOnSwipeBeginHook->m_pOriginal)(thisptr, e);
 }
 
@@ -76,7 +76,7 @@ static void hkOnSwipeEnd(void *thisptr, wlr_pointer_swipe_end_event *e)
     dispatch_toggleoverview("");
     return;
   }
-  hypershell_log(LOG, "OnSwipeEnd hook toggle");
+  hyprshell_log(LOG, "OnSwipeEnd hook toggle");
   (*(origOnSwipeEnd)g_pOnSwipeEndHook->m_pOriginal)(thisptr, e);
 }
 
@@ -96,7 +96,7 @@ static void toggle_hotarea(int x_root, int y_root)
       x_root < hx && x_root >= m_x &&
       y_root <= (m_y + m_height))
   {
-    hypershell_log(LOG, "cursor enter hotarea");
+    hyprshell_log(LOG, "cursor enter hotarea");
     // dispatch_toggleoverview(arg);
 
     // hotcorner will switch window state for maximized or fullscreen
@@ -268,18 +268,26 @@ static void moveWorkspaceWithHyprctl(std::string num)
 // keyboard implementation, handle keypress events
 static void keyPressHook(void *key_event, SCallbackInfo &info, std::any data)
 {
-  if (g_isOverView && g_enable_keypress)
-  {
+    info.cancelled = false;
     const auto DATA = std::any_cast<std::unordered_map<std::string, std::any>>(data);
     const auto PKEYBOARD = std::any_cast<SKeyboard *>(DATA.at("keyboard"));
     const auto state = wlr_keyboard_from_input_device(PKEYBOARD->keyboard)->xkb_state;
     const auto e = std::any_cast<wlr_keyboard_key_event *>(DATA.at("event"));
-    CWindow *PWINDOW = nullptr;
+
+    const auto KEYCODE = e->keycode + 8;
+
     if (!PKEYBOARD->enabled)
     {
       return;
     }
+ 
+  if (g_isOverView && g_enable_keypress)
+  {
+
+
+
     std::clog << (e->keycode) << std::endl;
+
 
     // leave overview with ESC, keycode 1 == ESC
     if (e->keycode == 1)
@@ -385,24 +393,24 @@ static void hkOnWindowRemovedTiling(void *thisptr, CWindow *pWindow)
 
   if (g_isOverView && g_GridLayout->m_lGridNodesData.empty())
   {
-    hypershell_log(LOG, "no tiling windwo,auto exit overview");
+    hyprshell_log(LOG, "no tiling windwo,auto exit overview");
     dispatch_leaveoverview("");
   }
 }
 
 static void hkChangeworkspace(void *thisptr, std::string args)
 {
-  hypershell_log(LOG, "ChangeworkspaceHook hook toggle");
+  hyprshell_log(LOG, "ChangeworkspaceHook hook toggle");
 }
 
 static void hkMoveActiveToWorkspace(void *thisptr, std::string args)
 {
-  hypershell_log(LOG, "MoveActiveToWorkspace hook toggle");
+  hyprshell_log(LOG, "MoveActiveToWorkspace hook toggle");
 }
 
 static void hkSpawn(void *thisptr, std::string args)
 {
-  hypershell_log(LOG, "Spawn hook toggle");
+  hyprshell_log(LOG, "Spawn hook toggle");
 }
 
 void registerGlobalEventHook()

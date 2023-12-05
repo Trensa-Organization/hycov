@@ -34,7 +34,7 @@ CWindow  *direction_select(std::string arg){
 	}
 
     if (!isDirection(arg)) {
-        hypershell_log(ERR, "Cannot move focus in direction {}, unsupported direction. Supported: l/left,r/right,u/up,d/down", arg);
+        hyprshell_log(ERR, "Cannot move focus in direction {}, unsupported direction. Supported: l/left,r/right,u/up,d/down", arg);
         return nullptr;
     }
 
@@ -182,7 +182,7 @@ void dispatch_focusdir(std::string arg)
 
 void dispatch_toggleoverview(std::string arg)
 {
-	hypershell_log(LOG,"toggle overview");
+	hyprshell_log(LOG,"toggle overview");
 	if (g_isOverView) {
 		dispatch_leaveoverview(arg);
 	} else {
@@ -212,7 +212,7 @@ void dispatch_enteroverview(std::string arg)
 		return;
 	}
 
-	hypershell_log(LOG,"enter overview");
+	hyprshell_log(LOG,"enter overview");
 	g_isOverView = true;
 
 
@@ -274,7 +274,7 @@ void dispatch_leaveoverview(std::string arg)
 		return;
 	}
 	
-	hypershell_log(LOG,"leave overview");
+	hyprshell_log(LOG,"leave overview");
 	g_isOverView = false;
 
 	//restore workspace name
@@ -376,8 +376,8 @@ void dispatch_leaveoverview(std::string arg)
 
 void registerDispatchers()
 {
-	HyprlandAPI::addDispatcher(PHANDLE, "hypershell:enteroverview", dispatch_enteroverview);
-	HyprlandAPI::addDispatcher(PHANDLE, "hypershell:leaveoverview", dispatch_leaveoverview);
-	HyprlandAPI::addDispatcher(PHANDLE, "hypershell:toggleoverview", dispatch_toggleoverview);
-	HyprlandAPI::addDispatcher(PHANDLE, "hypershell:movefocus", dispatch_focusdir);
+	HyprlandAPI::addDispatcher(PHANDLE, "hyprshell:enteroverview", dispatch_enteroverview);
+	HyprlandAPI::addDispatcher(PHANDLE, "hyprshell:leaveoverview", dispatch_leaveoverview);
+	HyprlandAPI::addDispatcher(PHANDLE, "hyprshell:toggleoverview", dispatch_toggleoverview);
+	HyprlandAPI::addDispatcher(PHANDLE, "hyprshell:movefocus", dispatch_focusdir);
 }
