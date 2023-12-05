@@ -1,7 +1,7 @@
 [hyprshell]
 description = "clients overview for hyprland"
 version = "0.1"
-author = "DreamMaoMao"
+author = "killown"
 
 [hyprshell.build]
 output = "build/libhyprshell.so"
