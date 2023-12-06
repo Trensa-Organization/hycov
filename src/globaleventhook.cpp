@@ -6,6 +6,7 @@
 #include "dispatchers.hpp"
 #include "globals.hpp"
 #include "GridLayout.hpp"
+using namespace std;
 
 typedef void (*origOnSwipeBegin)(void *, wlr_pointer_swipe_begin_event *e);
 typedef void (*origOnSwipeEnd)(void *, wlr_pointer_swipe_end_event *e);
@@ -265,6 +266,14 @@ static void moveWorkspaceWithHyprctl(std::string num)
   HyprlandAPI::invokeHyprctlCommand("dispatch", movetoworkspace);
 }
 
+static const char *
+get_keysym_name(xcb_keysym_t keysym)
+{
+    static char name[64];
+    xkb_keysym_get_name(keysym, name, sizeof(name));
+    return name;
+}
+
 // keyboard implementation, handle keypress events
 static void keyPressHook(void *key_event, SCallbackInfo &info, std::any data)
 {
@@ -275,6 +284,10 @@ static void keyPressHook(void *key_event, SCallbackInfo &info, std::any data)
     const auto e = std::any_cast<wlr_keyboard_key_event *>(DATA.at("event"));
 
     const auto KEYCODE = e->keycode + 8;
+    const auto KEYSYM =  xkb_state_key_get_one_sym(state, KEYCODE);
+		const auto KEYNAME = get_keysym_name(KEYSYM);
+
+
 
     if (!PKEYBOARD->enabled)
     {
@@ -346,6 +359,19 @@ static void keyPressHook(void *key_event, SCallbackInfo &info, std::any data)
       moveWorkspaceWithHyprctl("9");
       info.cancelled = true;
     }
+
+    list<int> menu_keys{24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58};
+    
+    bool start_menu = (std::find(menu_keys.begin(), menu_keys.end(),e->keycode) != menu_keys.end());
+    if (start_menu)
+    {
+      dispatch_toggleoverview("");
+      const auto cmd = std::format("exec nwg-drawer -wm hyprland -c 10 -k -search {}", KEYNAME);
+      std::clog << (cmd) << std::endl;
+      HyprlandAPI::invokeHyprctlCommand("dispatch", cmd);
+      info.cancelled = true;
+    }
+
   }
 }
 

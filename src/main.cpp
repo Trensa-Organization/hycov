@@ -32,6 +32,7 @@ APICALL EXPORT PLUGIN_DESCRIPTION_INFO PLUGIN_INIT(HANDLE handle)
 	CONF("enable_mouse_side_button", int, 1);
 	CONF("enable_mouse_extra_button", int, 1);
 	CONF("enable_keypress", int, 1);
+	CONF("menu_app_exec", int, 1);
 	CONF("use_default_layout", int, 1);
 	CONF("swipe_fingers", int, 4);
 	CONF("move_focus_distance", int, 100);
@@ -48,6 +49,7 @@ APICALL EXPORT PLUGIN_DESCRIPTION_INFO PLUGIN_INIT(HANDLE handle)
 	static const auto *pEnable_enable_mouse_extra_button_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hyprshell:enable_mouse_extra_button")->intValue;
 	static const auto *pEnable_enable_keypress_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hyprshell:enable_keypress")->intValue;
 	static const auto *pEnable_g_use_default_layout = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hyprshell:use_default_layout")->intValue;
+	static const auto *pMenu_app_exec = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hyprshell:menu_app_exec")->intValue;
   	static const auto *pHotarea_size_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hyprshell:hotarea_size")->intValue;
 	static const auto *pSwipe_fingers_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hyprshell:swipe_fingers")->intValue;
 	static const auto *pMove_focus_distance_config = &HyprlandAPI::getConfigValue(PHANDLE, "plugin:hyprshell:move_focus_distance")->intValue;
@@ -62,6 +64,7 @@ APICALL EXPORT PLUGIN_DESCRIPTION_INFO PLUGIN_INIT(HANDLE handle)
 	g_enable_mouse_extra_button = *pEnable_enable_mouse_extra_button_config;
     g_enable_keypress = *pEnable_enable_keypress_config;
 	g_use_default_layout = *pEnable_g_use_default_layout;
+	g_menu_app_exec = *pMenu_app_exec;
 	g_hotarea_size = *pHotarea_size_config;
 	g_swipe_fingers = *pSwipe_fingers_config;
 	g_move_focus_distance = *pMove_focus_distance_config;
