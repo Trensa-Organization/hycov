@@ -209,7 +209,8 @@ void dispatch_enteroverview(std::string arg)
 
 	//if no clients, forbit enter overview 
 	if(isNoShouldTileWindow){
-		return;
+      HyprlandAPI::invokeHyprctlCommand("dispatch", "exec nwg-drawer -wm hyprland -c 8 -k");
+	  return;
 	}
 
 	hyprshell_log(LOG,"enter overview");

@@ -219,11 +219,19 @@ static void mouseButtonHook(void *, SCallbackInfo &info, std::any data)
     break;
 
   case BTN_SIDE:
+    if (!g_isOverView && pEvent->state == WLR_BUTTON_PRESSED)
+    {
+      info.cancelled = true;
+    }
     if (pEvent->state == WLR_BUTTON_PRESSED && g_enable_mouse_side_button)
     {
       dispatch_toggleoverview("");
       info.cancelled = true;
     }
+    else{
+      
+    }
+
     break;
 
   case BTN_EXTRA:
@@ -274,6 +282,7 @@ get_keysym_name(xcb_keysym_t keysym)
     return name;
 }
 
+
 // keyboard implementation, handle keypress events
 static void keyPressHook(void *key_event, SCallbackInfo &info, std::any data)
 {
@@ -282,12 +291,9 @@ static void keyPressHook(void *key_event, SCallbackInfo &info, std::any data)
     const auto PKEYBOARD = std::any_cast<SKeyboard *>(DATA.at("keyboard"));
     const auto state = wlr_keyboard_from_input_device(PKEYBOARD->keyboard)->xkb_state;
     const auto e = std::any_cast<wlr_keyboard_key_event *>(DATA.at("event"));
-
     const auto KEYCODE = e->keycode + 8;
     const auto KEYSYM =  xkb_state_key_get_one_sym(state, KEYCODE);
 		const auto KEYNAME = get_keysym_name(KEYSYM);
-
-
 
     if (!PKEYBOARD->enabled)
     {
@@ -299,62 +305,63 @@ static void keyPressHook(void *key_event, SCallbackInfo &info, std::any data)
 
 
 
-    std::clog << (e->keycode) << std::endl;
-
+    std::clog << (KEYNAME) << std::endl;
+    const auto notify = std::format("exec notify-send {}", KEYNAME);
+    HyprlandAPI::invokeHyprctlCommand("dispatch", notify);
 
     // leave overview with ESC, keycode 1 == ESC
-    if (e->keycode == 1)
+    if (KEYNAME == keysym_ESC)
     {
       dispatch_toggleoverview("");
       info.cancelled = true;
     }
 
     // move to workspace using the given number
-    if (e->keycode == 2)
+    if (KEYNAME == keysym_1)
     {
       moveWorkspaceWithHyprctl("1");
       info.cancelled = true;
     }
 
-    if (e->keycode == 3)
+    if (KEYNAME == keysym_2)
     {
       moveWorkspaceWithHyprctl("2");
       info.cancelled = true;
     }
-    if (e->keycode == 4)
+    if (KEYNAME == keysym_3)
     {
       moveWorkspaceWithHyprctl("3");
       info.cancelled = true;
     }
 
-    if (e->keycode == 5)
+    if (KEYNAME == keysym_4)
     {
       moveWorkspaceWithHyprctl("4");
       info.cancelled = true;
     }
-    if (e->keycode == 6)
+    if (KEYNAME == keysym_5)
     {
       moveWorkspaceWithHyprctl("5");
       info.cancelled = true;
     }
 
-    if (e->keycode == 7)
+    if (KEYNAME == keysym_6)
     {
       moveWorkspaceWithHyprctl("6");
       info.cancelled = true;
     }
-    if (e->keycode == 8)
+    if (KEYNAME == keysym_7)
     {
       moveWorkspaceWithHyprctl("7");
       info.cancelled = true;
     }
 
-    if (e->keycode == 9)
+    if (KEYNAME == keysym_8)
     {
       moveWorkspaceWithHyprctl("8");
       info.cancelled = true;
     }
-    if (e->keycode == 10)
+    if (KEYNAME == keysym_9)
     {
       moveWorkspaceWithHyprctl("9");
       info.cancelled = true;
@@ -366,7 +373,7 @@ static void keyPressHook(void *key_event, SCallbackInfo &info, std::any data)
     if (start_menu)
     {
       dispatch_toggleoverview("");
-      const auto cmd = std::format("exec nwg-drawer -wm hyprland -c 10 -k -search {}", KEYNAME);
+      const auto cmd = std::format("exec nwg-drawer -wm hyprland -c 8 -k -search {}", KEYNAME);
       std::clog << (cmd) << std::endl;
       HyprlandAPI::invokeHyprctlCommand("dispatch", cmd);
       info.cancelled = true;
