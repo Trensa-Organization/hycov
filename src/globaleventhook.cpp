@@ -305,9 +305,9 @@ static void keyPressHook(void *key_event, SCallbackInfo &info, std::any data)
 
 
 
-    std::clog << (KEYNAME) << std::endl;
-    const auto notify = std::format("exec notify-send {}", KEYNAME);
-    HyprlandAPI::invokeHyprctlCommand("dispatch", notify);
+    //std::clog << (KEYNAME) << std::endl;
+    //const auto notify = std::format("exec notify-send {}", KEYNAME);
+    //HyprlandAPI::invokeHyprctlCommand("dispatch", notify);
 
     // leave overview with ESC, keycode 1 == ESC
     if (KEYNAME == keysym_ESC)
