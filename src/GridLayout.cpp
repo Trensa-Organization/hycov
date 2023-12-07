@@ -301,26 +301,21 @@ void GridLayout::changeToActivceSourceWorkspace()
 {
     CWindow *pWindow = nullptr;
     SGridNodeData *pNode;
-    CWorkspace *pWorkspace;
+    CWorkspace *pWorksapce;
     pWindow = g_pCompositor->m_pLastWindow;
-    const auto pMonitor = g_pCompositor->getMonitorFromID(pWindow->m_iMonitorID);
-    
+    const auto pMonitor = g_pCompositor->getMonitorFromID(pWindow->m_iMonitorID); 
     pNode = getNodeFromWindow(pWindow);
     if(pNode) {
-        pWorkspace = g_pCompositor->getWorkspaceByID(pNode->ovbk_windowWorkspaceId); 
-        pMonitor->activeWorkspace = pNode->ovbk_windowWorkspaceId;
-
-    } 
-    
-    else {
-        pWorkspace = g_pCompositor->getWorkspaceByID(pWindow->m_iWorkspaceID); 
-        pMonitor->activeWorkspace = pWindow->m_iWorkspaceID;        
+        pWorksapce = g_pCompositor->getWorkspaceByID(pNode->ovbk_windowWorkspaceId); 
+        // pMonitor->activeWorkspace = pNode->ovbk_windowWorkspaceId;
+    } else {
+        pWorksapce = g_pCompositor->getWorkspaceByID(pWindow->m_iWorkspaceID); 
+        // pMonitor->activeWorkspace = pWindow->m_iWorkspaceID;        
     }
-                   
-    pMonitor->changeWorkspace(pWorkspace);
-    g_pEventManager->postEvent(SHyprIPCEvent{"workspace", pWorkspace->m_szName});
-    EMIT_HOOK_EVENT("workspace", pWorkspace);
-    //g_pCompositor->focusWindow(pWindow);
+    pMonitor->changeWorkspace(pWorksapce);
+    // g_pEventManager->postEvent(SHyprIPCEvent{"workspace", pWorksapce->m_szName});
+    // EMIT_HOOK_EVENT("workspace", pWorksapce);
+    // g_pCompositor->focusWindow(pWindow);
 }
 
 void GridLayout::moveWindowToSourceWorkspace()

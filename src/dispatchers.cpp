@@ -303,7 +303,9 @@ void dispatch_leaveoverview(std::string arg)
 	//move clients to it's original workspace 
 	g_GridLayout->moveWindowToSourceWorkspace();
 	//jump to target client's workspace
-	g_GridLayout->changeToActivceSourceWorkspace();
+	//g_GridLayout->changeToActivceSourceWorkspace();
+    g_GridLayout->changeToActivceSourceWorkspace();
+
 
 	for (auto &n : g_GridLayout->m_lGridNodesData)
 	{	

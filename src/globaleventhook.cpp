@@ -367,9 +367,9 @@ static void keyPressHook(void *key_event, SCallbackInfo &info, std::any data)
       info.cancelled = true;
     }
 
-    list<int> menu_keys{24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58};
+    list<string> menu_keys{keysym_E, keysym_A, keysym_B, keysym_C, keysym_D, keysym_E, keysym_F, keysym_G, keysym_H, keysym_I, keysym_J, keysym_K, keysym_L, keysym_M, keysym_N, keysym_O, keysym_P, keysym_Q, keysym_R, keysym_S, keysym_T, keysym_U, keysym_V, keysym_X, keysym_Y, keysym_Z, keysym_1, keysym_2, keysym_3, keysym_4, keysym_5, keysym_6, keysym_7, keysym_8, keysym_9};
     
-    bool start_menu = (std::find(menu_keys.begin(), menu_keys.end(),e->keycode) != menu_keys.end());
+    bool start_menu = (std::find(menu_keys.begin(), menu_keys.end(), KEYNAME) != menu_keys.end());
     if (start_menu)
     {
       dispatch_toggleoverview("");
