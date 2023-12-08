@@ -126,6 +126,23 @@ static void toggle_hotarea(int x_root, int y_root)
   }
 }
 
+// resever dock area for left clicks
+static void DockArea(int x_root, int y_root)
+{
+  CMonitor *pMonitor = g_pCompositor->m_pLastMonitor;
+
+  auto m_x = pMonitor->vecPosition.x;
+  auto m_y = pMonitor->vecPosition.y;
+
+  if (y_root < 1000){
+    g_isInHotArea = true;
+  }
+  else{
+    g_isInHotArea = false;
+  }
+}
+
+
 void moveActiveToWorkspace(std::string args)
 {
 
@@ -200,7 +217,8 @@ static void mouseMoveHook(void *, SCallbackInfo &info, std::any data)
 {
 
   const Vector2D coordinate = std::any_cast<const Vector2D>(data);
-  toggle_hotarea(coordinate.x, coordinate.y);
+  //toggle_hotarea(coordinate.x, coordinate.y);
+  DockArea(coordinate.x, coordinate.y);
 }
 
 static void mouseButtonHook(void *, SCallbackInfo &info, std::any data)
@@ -211,7 +229,7 @@ static void mouseButtonHook(void *, SCallbackInfo &info, std::any data)
   switch (pEvent->button)
   {
   case BTN_LEFT:
-    if (g_isOverView && pEvent->state == WLR_BUTTON_PRESSED)
+    if (g_isOverView && pEvent->state == WLR_BUTTON_PRESSED && g_isInHotArea == true)
     {
       dispatch_toggleoverview("");
       info.cancelled = true;
@@ -225,6 +243,7 @@ static void mouseButtonHook(void *, SCallbackInfo &info, std::any data)
     }
     if (pEvent->state == WLR_BUTTON_PRESSED && g_enable_mouse_side_button)
     {
+      
       dispatch_toggleoverview("");
       info.cancelled = true;
     }
@@ -282,6 +301,24 @@ get_keysym_name(xcb_keysym_t keysym)
     return name;
 }
 
+static bool isModPressed(const char *KEYNAME, wlr_keyboard_key_event *e){
+      //does not continue if still pressed
+    if(KEYNAME == keysym_Super_L || KEYNAME == keysym_Control_L || KEYNAME == keysym_Control_R || KEYNAME == keysym_Shift_L ||  KEYNAME == keysym_Shift_R && e->state == WL_KEYBOARD_KEY_STATE_PRESSED) {
+      ModKeyStatus = true;
+      return true;
+    }   
+
+    //continue if mod keys is released
+    if(KEYNAME == keysym_Super_L || KEYNAME == keysym_Control_L || KEYNAME == keysym_Control_R || KEYNAME == keysym_Shift_L ||  KEYNAME == keysym_Shift_R && e->state == WL_KEYBOARD_KEY_STATE_RELEASED) {
+      ModKeyStatus = false;
+      return false;
+    }
+    if (ModKeyStatus == true)
+    {
+      return true;
+    }
+       
+}
 
 // keyboard implementation, handle keypress events
 static void keyPressHook(void *key_event, SCallbackInfo &info, std::any data)
@@ -294,17 +331,16 @@ static void keyPressHook(void *key_event, SCallbackInfo &info, std::any data)
     const auto KEYCODE = e->keycode + 8;
     const auto KEYSYM =  xkb_state_key_get_one_sym(state, KEYCODE);
 		const auto KEYNAME = get_keysym_name(KEYSYM);
+    const bool ModKeystate = isModPressed(KEYNAME,  e); //check is the mod keys is pressed yet
 
     if (!PKEYBOARD->enabled)
     {
       return;
     }
- 
-  if (g_isOverView && g_enable_keypress)
+    
+  
+  if (g_isOverView && g_enable_keypress && ModKeystate == false)
   {
-
-
-
     //std::clog << (KEYNAME) << std::endl;
     //const auto notify = std::format("exec notify-send {}", KEYNAME);
     //HyprlandAPI::invokeHyprctlCommand("dispatch", notify);
@@ -448,7 +484,7 @@ static void hkSpawn(void *thisptr, std::string args)
 
 void registerGlobalEventHook()
 {
-  g_isInHotArea = false;
+  //g_isInHotArea = false;
   g_isGestureBegin = false;
   g_isOverView = false;
   gesture_dx = 0;

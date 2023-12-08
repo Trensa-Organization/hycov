@@ -59,6 +59,13 @@ inline std::string keysym_6 = "6";
 inline std::string keysym_7 = "7";
 inline std::string keysym_8 = "8";
 inline std::string keysym_9 = "9";
+inline std::string keysym_Super_L = "Super_L";
+inline std::string keysym_Control_L = "Control_L";
+inline std::string keysym_Control_R = "Control_R";
+inline std::string keysym_Shift_L = "Shift_L";
+inline std::string keysym_Shift_R = "Shift_R";
+inline bool ModKeyStatus = false;
+
 
 
 inline CFunctionHook* g_pOnSwipeBeginHook = nullptr;
