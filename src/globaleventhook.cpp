@@ -104,15 +104,15 @@ static void toggle_hotarea(int x_root, int y_root)
 
     if (!g_pCompositor->m_pLastWindow->m_bIsFullscreen || FullScreenMaximized == true)
     {
-      //g_pCompositor->setWindowFullscreen(g_pCompositor->m_pLastWindow, false, FULLSCREEN_FULL);
-      //g_pCompositor->setWindowFullscreen(g_pCompositor->m_pLastWindow, true, FULLSCREEN_FULL);
+      // g_pCompositor->setWindowFullscreen(g_pCompositor->m_pLastWindow, false, FULLSCREEN_FULL);
+      // g_pCompositor->setWindowFullscreen(g_pCompositor->m_pLastWindow, true, FULLSCREEN_FULL);
       FullScreenMaximized = false;
       g_isInHotArea = true;
     }
     else
     {
-      //g_pCompositor->setWindowFullscreen(g_pCompositor->m_pLastWindow, false, FULLSCREEN_FULL);
-      //g_pCompositor->setWindowFullscreen(g_pCompositor->m_pLastWindow, true, FULLSCREEN_MAXIMIZED);
+      // g_pCompositor->setWindowFullscreen(g_pCompositor->m_pLastWindow, false, FULLSCREEN_FULL);
+      // g_pCompositor->setWindowFullscreen(g_pCompositor->m_pLastWindow, true, FULLSCREEN_MAXIMIZED);
       FullScreenMaximized = true;
       g_isInHotArea = true;
     }
@@ -134,14 +134,15 @@ static void DockArea(int x_root, int y_root)
   auto m_x = pMonitor->vecPosition.x;
   auto m_y = pMonitor->vecPosition.y;
 
-  if (y_root < 1000){
+  if (y_root < 1000)
+  {
     g_isInHotArea = true;
   }
-  else{
+  else
+  {
     g_isInHotArea = false;
   }
 }
-
 
 void moveActiveToWorkspace(std::string args)
 {
@@ -217,7 +218,7 @@ static void mouseMoveHook(void *, SCallbackInfo &info, std::any data)
 {
 
   const Vector2D coordinate = std::any_cast<const Vector2D>(data);
-  //toggle_hotarea(coordinate.x, coordinate.y);
+  // toggle_hotarea(coordinate.x, coordinate.y);
   DockArea(coordinate.x, coordinate.y);
 }
 
@@ -243,12 +244,12 @@ static void mouseButtonHook(void *, SCallbackInfo &info, std::any data)
     }
     if (pEvent->state == WLR_BUTTON_PRESSED && g_enable_mouse_side_button)
     {
-      
+
       dispatch_toggleoverview("");
       info.cancelled = true;
     }
-    else{
-      
+    else
+    {
     }
 
     break;
@@ -296,20 +297,28 @@ static void moveWorkspaceWithHyprctl(std::string num)
 static const char *
 get_keysym_name(xcb_keysym_t keysym)
 {
-    static char name[64];
-    xkb_keysym_get_name(keysym, name, sizeof(name));
-    return name;
+  static char name[64];
+  xkb_keysym_get_name(keysym, name, sizeof(name));
+  return name;
 }
 
-static bool isModPressed(const char *KEYNAME, wlr_keyboard_key_event *e){
-      //does not continue if still pressed
-    if(KEYNAME == keysym_Super_L || KEYNAME == keysym_Control_L || KEYNAME == keysym_Control_R || KEYNAME == keysym_Shift_L ||  KEYNAME == keysym_Shift_R && e->state == WL_KEYBOARD_KEY_STATE_PRESSED) {
+static bool isModPressed(const char *KEYNAME, wlr_keyboard_key_event *const e)
+{
+  // does not continue if still pressed
+  if (KEYNAME == keysym_Super_L || KEYNAME == keysym_Control_L || KEYNAME == keysym_Control_R || KEYNAME == keysym_Shift_L || KEYNAME == keysym_Shift_R)
+  {
+    if (e->state == WL_KEYBOARD_KEY_STATE_PRESSED)
+    {
       ModKeyStatus = true;
       return true;
-    }   
+    }
+  }
 
-    //continue if mod keys is released
-    if(KEYNAME == keysym_Super_L || KEYNAME == keysym_Control_L || KEYNAME == keysym_Control_R || KEYNAME == keysym_Shift_L ||  KEYNAME == keysym_Shift_R && e->state == WL_KEYBOARD_KEY_STATE_RELEASED) {
+  // continue if mod keys is released
+  if (KEYNAME == keysym_Super_L || KEYNAME == keysym_Control_L || KEYNAME == keysym_Control_R || KEYNAME == keysym_Shift_L || KEYNAME == keysym_Shift_R)
+  {
+    if (e->state == WL_KEYBOARD_KEY_STATE_RELEASED)
+    {
       ModKeyStatus = false;
       return false;
     }
@@ -317,220 +326,223 @@ static bool isModPressed(const char *KEYNAME, wlr_keyboard_key_event *e){
     {
       return true;
     }
-       
+    else
+    {
+      return false;
+    }
+  }
+
 }
 
-// keyboard implementation, handle keypress events
-static void keyPressHook(void *key_event, SCallbackInfo &info, std::any data)
-{
+  // keyboard implementation, handle keypress events
+  static void keyPressHook(void *key_event, SCallbackInfo &info, std::any data)
+  {
     info.cancelled = false;
     const auto DATA = std::any_cast<std::unordered_map<std::string, std::any>>(data);
     const auto PKEYBOARD = std::any_cast<SKeyboard *>(DATA.at("keyboard"));
     const auto state = wlr_keyboard_from_input_device(PKEYBOARD->keyboard)->xkb_state;
     const auto e = std::any_cast<wlr_keyboard_key_event *>(DATA.at("event"));
     const auto KEYCODE = e->keycode + 8;
-    const auto KEYSYM =  xkb_state_key_get_one_sym(state, KEYCODE);
-		const auto KEYNAME = get_keysym_name(KEYSYM);
-    const bool ModKeystate = isModPressed(KEYNAME,  e); //check is the mod keys is pressed yet
+    const auto KEYSYM = xkb_state_key_get_one_sym(state, KEYCODE);
+    const auto KEYNAME = get_keysym_name(KEYSYM);
+    const bool ModKeystate = isModPressed(KEYNAME, e); // check is the mod keys is pressed yet
 
     if (!PKEYBOARD->enabled)
     {
       return;
     }
-    
-  
-  if (g_isOverView && g_enable_keypress && ModKeystate == false)
-  {
-    //std::clog << (KEYNAME) << std::endl;
-    //const auto notify = std::format("exec notify-send {}", KEYNAME);
-    //HyprlandAPI::invokeHyprctlCommand("dispatch", notify);
 
-    // leave overview with ESC, keycode 1 == ESC
-    if (KEYNAME == keysym_ESC)
+    if (g_isOverView && g_enable_keypress && ModKeystate == false)
     {
-      dispatch_toggleoverview("");
-      info.cancelled = true;
-    }
+      // std::clog << (KEYNAME) << std::endl;
+      // const auto notify = std::format("exec notify-send {}", KEYNAME);
+      // HyprlandAPI::invokeHyprctlCommand("dispatch", notify);
 
-    // move to workspace using the given number
-    if (KEYNAME == keysym_1)
-    {
-      moveWorkspaceWithHyprctl("1");
-      info.cancelled = true;
-    }
-
-    if (KEYNAME == keysym_2)
-    {
-      moveWorkspaceWithHyprctl("2");
-      info.cancelled = true;
-    }
-    if (KEYNAME == keysym_3)
-    {
-      moveWorkspaceWithHyprctl("3");
-      info.cancelled = true;
-    }
-
-    if (KEYNAME == keysym_4)
-    {
-      moveWorkspaceWithHyprctl("4");
-      info.cancelled = true;
-    }
-    if (KEYNAME == keysym_5)
-    {
-      moveWorkspaceWithHyprctl("5");
-      info.cancelled = true;
-    }
-
-    if (KEYNAME == keysym_6)
-    {
-      moveWorkspaceWithHyprctl("6");
-      info.cancelled = true;
-    }
-    if (KEYNAME == keysym_7)
-    {
-      moveWorkspaceWithHyprctl("7");
-      info.cancelled = true;
-    }
-
-    if (KEYNAME == keysym_8)
-    {
-      moveWorkspaceWithHyprctl("8");
-      info.cancelled = true;
-    }
-    if (KEYNAME == keysym_9)
-    {
-      moveWorkspaceWithHyprctl("9");
-      info.cancelled = true;
-    }
-
-    list<string> menu_keys{keysym_E, keysym_A, keysym_B, keysym_C, keysym_D, keysym_E, keysym_F, keysym_G, keysym_H, keysym_I, keysym_J, keysym_K, keysym_L, keysym_M, keysym_N, keysym_O, keysym_P, keysym_Q, keysym_R, keysym_S, keysym_T, keysym_U, keysym_V, keysym_X, keysym_Y, keysym_Z, keysym_1, keysym_2, keysym_3, keysym_4, keysym_5, keysym_6, keysym_7, keysym_8, keysym_9};
-    
-    bool start_menu = (std::find(menu_keys.begin(), menu_keys.end(), KEYNAME) != menu_keys.end());
-    if (start_menu)
-    {
-      dispatch_toggleoverview("");
-      const auto cmd = std::format("exec nwg-drawer -wm hyprland -c 8 -k -search {}", KEYNAME);
-      std::clog << (cmd) << std::endl;
-      HyprlandAPI::invokeHyprctlCommand("dispatch", cmd);
-      info.cancelled = true;
-    }
-
-  }
-}
-
-static void mouseAxisHook(void *self, SCallbackInfo &info, std::any data)
-{
-
-  if (g_isOverView)
-  {
-    info.cancelled = false;
-    const auto DATA = std::any_cast<std::unordered_map<std::string, std::any>>(data);
-    const auto e = std::any_cast<wlr_pointer_axis_event *>(DATA.at("event"));
-    const auto PMONITORTOCHANGETORIGHT = g_pCompositor->getMonitorInDirection('r');
-    const auto PWORKSPACERIGHT = g_pCompositor->getWorkspaceByID(PMONITORTOCHANGETORIGHT->activeWorkspace);
-    const auto PMONITORTOCHANGETOLEFT = g_pCompositor->getMonitorInDirection('l');
-    const auto PWORKSPACELEFT = g_pCompositor->getWorkspaceByID(PMONITORTOCHANGETOLEFT->activeWorkspace);
-
-    if (!PMONITORTOCHANGETOLEFT && !PMONITORTOCHANGETORIGHT)
-      return;
-
-    // mouse wheel up, need implementation to move active window to workspace right
-    if (e->source == WLR_AXIS_SOURCE_WHEEL && e->orientation == WLR_AXIS_ORIENTATION_VERTICAL)
-    {
-      if (e->delta < 0)
+      // leave overview with ESC, keycode 1 == ESC
+      if (KEYNAME == keysym_ESC)
       {
-        // moveActiveToWorkspace(PWORKSPACERIGHT->getConfigName());
+        dispatch_toggleoverview("");
         info.cancelled = true;
       }
-    }
 
-    // mouse wheel down, mouse wheel up, need implementation to move active window to workspace left
-    if (e->source == WLR_AXIS_SOURCE_WHEEL && e->orientation == WLR_AXIS_ORIENTATION_HORIZONTAL)
-    {
-      if (e->delta > 0)
+      // move to workspace using the given number
+      if (KEYNAME == keysym_1)
       {
-        // moveActiveToWorkspace(PWORKSPACELEFT->getConfigName());
+        moveWorkspaceWithHyprctl("1");
+        info.cancelled = true;
+      }
+
+      if (KEYNAME == keysym_2)
+      {
+        moveWorkspaceWithHyprctl("2");
+        info.cancelled = true;
+      }
+      if (KEYNAME == keysym_3)
+      {
+        moveWorkspaceWithHyprctl("3");
+        info.cancelled = true;
+      }
+
+      if (KEYNAME == keysym_4)
+      {
+        moveWorkspaceWithHyprctl("4");
+        info.cancelled = true;
+      }
+      if (KEYNAME == keysym_5)
+      {
+        moveWorkspaceWithHyprctl("5");
+        info.cancelled = true;
+      }
+
+      if (KEYNAME == keysym_6)
+      {
+        moveWorkspaceWithHyprctl("6");
+        info.cancelled = true;
+      }
+      if (KEYNAME == keysym_7)
+      {
+        moveWorkspaceWithHyprctl("7");
+        info.cancelled = true;
+      }
+
+      if (KEYNAME == keysym_8)
+      {
+        moveWorkspaceWithHyprctl("8");
+        info.cancelled = true;
+      }
+      if (KEYNAME == keysym_9)
+      {
+        moveWorkspaceWithHyprctl("9");
+        info.cancelled = true;
+      }
+
+      list<string> menu_keys{keysym_E, keysym_A, keysym_B, keysym_C, keysym_D, keysym_E, keysym_F, keysym_G, keysym_H, keysym_I, keysym_J, keysym_K, keysym_L, keysym_M, keysym_N, keysym_O, keysym_P, keysym_Q, keysym_R, keysym_S, keysym_T, keysym_U, keysym_V, keysym_X, keysym_Y, keysym_Z, keysym_1, keysym_2, keysym_3, keysym_4, keysym_5, keysym_6, keysym_7, keysym_8, keysym_9};
+
+      bool start_menu = (std::find(menu_keys.begin(), menu_keys.end(), KEYNAME) != menu_keys.end());
+      if (start_menu)
+      {
+        dispatch_toggleoverview("");
+        const auto cmd = std::format("exec nwg-drawer -wm hyprland -c 8 -k -search {}", KEYNAME);
+        std::clog << (cmd) << std::endl;
+        HyprlandAPI::invokeHyprctlCommand("dispatch", cmd);
         info.cancelled = true;
       }
     }
   }
-}
 
-static void hkOnWindowRemovedTiling(void *thisptr, CWindow *pWindow)
-{
-  (*(origOnWindowRemovedTiling)g_pOnWindowRemovedTilingHook->m_pOriginal)(thisptr, pWindow);
-
-  if (g_isOverView && g_GridLayout->m_lGridNodesData.empty())
+  static void mouseAxisHook(void *self, SCallbackInfo &info, std::any data)
   {
-    hyprshell_log(LOG, "no tiling windwo,auto exit overview");
-    dispatch_leaveoverview("");
-  }
-}
 
-static void hkChangeworkspace(void *thisptr, std::string args)
-{
-  hyprshell_log(LOG, "ChangeworkspaceHook hook toggle");
-}
+    if (g_isOverView)
+    {
+      info.cancelled = false;
+      const auto DATA = std::any_cast<std::unordered_map<std::string, std::any>>(data);
+      const auto e = std::any_cast<wlr_pointer_axis_event *>(DATA.at("event"));
+      const auto PMONITORTOCHANGETORIGHT = g_pCompositor->getMonitorInDirection('r');
+      const auto PWORKSPACERIGHT = g_pCompositor->getWorkspaceByID(PMONITORTOCHANGETORIGHT->activeWorkspace);
+      const auto PMONITORTOCHANGETOLEFT = g_pCompositor->getMonitorInDirection('l');
+      const auto PWORKSPACELEFT = g_pCompositor->getWorkspaceByID(PMONITORTOCHANGETOLEFT->activeWorkspace);
 
-static void hkMoveActiveToWorkspace(void *thisptr, std::string args)
-{
-  hyprshell_log(LOG, "MoveActiveToWorkspace hook toggle");
-}
+      if (!PMONITORTOCHANGETOLEFT && !PMONITORTOCHANGETORIGHT)
+        return;
 
-static void hkSpawn(void *thisptr, std::string args)
-{
-  hyprshell_log(LOG, "Spawn hook toggle");
-}
+      // mouse wheel up, need implementation to move active window to workspace right
+      if (e->source == WLR_AXIS_SOURCE_WHEEL && e->orientation == WLR_AXIS_ORIENTATION_VERTICAL)
+      {
+        if (e->delta < 0)
+        {
+          // moveActiveToWorkspace(PWORKSPACERIGHT->getConfigName());
+          info.cancelled = true;
+        }
+      }
 
-void registerGlobalEventHook()
-{
-  //g_isInHotArea = false;
-  g_isGestureBegin = false;
-  g_isOverView = false;
-  gesture_dx = 0;
-  gesture_dy = 0;
-  gesture_previous_dx = 0;
-  gesture_previous_dy = 0;
-
-  g_pOnSwipeBeginHook = HyprlandAPI::createFunctionHook(PHANDLE, (void *)&CInputManager::onSwipeBegin, (void *)&hkOnSwipeBegin);
-  g_pOnSwipeEndHook = HyprlandAPI::createFunctionHook(PHANDLE, (void *)&CInputManager::onSwipeEnd, (void *)&hkOnSwipeEnd);
-  g_pOnSwipeUpdateHook = HyprlandAPI::createFunctionHook(PHANDLE, (void *)&CInputManager::onSwipeUpdate, (void *)&hkOnSwipeUpdate);
-
-  g_pOnWindowRemovedTilingHook = HyprlandAPI::createFunctionHook(PHANDLE, (void *)&GridLayout::onWindowRemovedTiling, (void *)&hkOnWindowRemovedTiling);
-
-  // create private function hook
-  static const auto ChangeworkspaceMethods = HyprlandAPI::findFunctionsByName(PHANDLE, "changeworkspace");
-  g_pChangeworkspaceHook = HyprlandAPI::createFunctionHook(PHANDLE, ChangeworkspaceMethods[0].address, (void *)&hkChangeworkspace);
-
-  static const auto MoveActiveToWorkspaceMethods = HyprlandAPI::findFunctionsByName(PHANDLE, "moveActiveToWorkspace");
-  g_pMoveActiveToWorkspaceHook = HyprlandAPI::createFunctionHook(PHANDLE, MoveActiveToWorkspaceMethods[0].address, (void *)&hkMoveActiveToWorkspace);
-
-  static const auto SpawnMethods = HyprlandAPI::findFunctionsByName(PHANDLE, "spawn");
-  g_pSpawnHook = HyprlandAPI::createFunctionHook(PHANDLE, SpawnMethods[0].address, (void *)&hkSpawn);
-
-  // register pEvent hook
-  if (g_enable_hotarea)
-  {
-    HyprlandAPI::registerCallbackDynamic(PHANDLE, "mouseMove", [&](void *self, SCallbackInfo &info, std::any data)
-                                         { mouseMoveHook(self, info, data); });
-    HyprlandAPI::registerCallbackDynamic(PHANDLE, "mouseButton", [&](void *self, SCallbackInfo &info, std::any data)
-                                         { mouseButtonHook(self, info, data); });
-  }
-  // HyprlandAPI::registerCallbackDynamic(PHANDLE, "mouseAxis", [&](void* self, SCallbackInfo& info, std::any data) { mouseAxisHook(self, info, data); });
-  HyprlandAPI::registerCallbackDynamic(PHANDLE, "keyPress", [&](void *key_event, SCallbackInfo &info, std::any data)
-                                       { keyPressHook(key_event, info, data); });
-
-  // enable function hook
-  if (g_enable_gesture)
-  {
-    g_pOnSwipeBeginHook->hook();
-    g_pOnSwipeEndHook->hook();
-    g_pOnSwipeUpdateHook->hook();
+      // mouse wheel down, mouse wheel up, need implementation to move active window to workspace left
+      if (e->source == WLR_AXIS_SOURCE_WHEEL && e->orientation == WLR_AXIS_ORIENTATION_HORIZONTAL)
+      {
+        if (e->delta > 0)
+        {
+          // moveActiveToWorkspace(PWORKSPACELEFT->getConfigName());
+          info.cancelled = true;
+        }
+      }
+    }
   }
 
-  // enable auto exit
-  if (g_auto_exit)
+  static void hkOnWindowRemovedTiling(void *thisptr, CWindow *pWindow)
   {
-    g_pOnWindowRemovedTilingHook->hook();
+    (*(origOnWindowRemovedTiling)g_pOnWindowRemovedTilingHook->m_pOriginal)(thisptr, pWindow);
+
+    if (g_isOverView && g_GridLayout->m_lGridNodesData.empty())
+    {
+      hyprshell_log(LOG, "no tiling windwo,auto exit overview");
+      dispatch_leaveoverview("");
+    }
   }
-}
+
+  static void hkChangeworkspace(void *thisptr, std::string args)
+  {
+    hyprshell_log(LOG, "ChangeworkspaceHook hook toggle");
+  }
+
+  static void hkMoveActiveToWorkspace(void *thisptr, std::string args)
+  {
+    hyprshell_log(LOG, "MoveActiveToWorkspace hook toggle");
+  }
+
+  static void hkSpawn(void *thisptr, std::string args)
+  {
+    hyprshell_log(LOG, "Spawn hook toggle");
+  }
+
+  void registerGlobalEventHook()
+  {
+    // g_isInHotArea = false;
+    g_isGestureBegin = false;
+    g_isOverView = false;
+    gesture_dx = 0;
+    gesture_dy = 0;
+    gesture_previous_dx = 0;
+    gesture_previous_dy = 0;
+
+    g_pOnSwipeBeginHook = HyprlandAPI::createFunctionHook(PHANDLE, (void *)&CInputManager::onSwipeBegin, (void *)&hkOnSwipeBegin);
+    g_pOnSwipeEndHook = HyprlandAPI::createFunctionHook(PHANDLE, (void *)&CInputManager::onSwipeEnd, (void *)&hkOnSwipeEnd);
+    g_pOnSwipeUpdateHook = HyprlandAPI::createFunctionHook(PHANDLE, (void *)&CInputManager::onSwipeUpdate, (void *)&hkOnSwipeUpdate);
+
+    g_pOnWindowRemovedTilingHook = HyprlandAPI::createFunctionHook(PHANDLE, (void *)&GridLayout::onWindowRemovedTiling, (void *)&hkOnWindowRemovedTiling);
+
+    // create private function hook
+    static const auto ChangeworkspaceMethods = HyprlandAPI::findFunctionsByName(PHANDLE, "changeworkspace");
+    g_pChangeworkspaceHook = HyprlandAPI::createFunctionHook(PHANDLE, ChangeworkspaceMethods[0].address, (void *)&hkChangeworkspace);
+
+    static const auto MoveActiveToWorkspaceMethods = HyprlandAPI::findFunctionsByName(PHANDLE, "moveActiveToWorkspace");
+    g_pMoveActiveToWorkspaceHook = HyprlandAPI::createFunctionHook(PHANDLE, MoveActiveToWorkspaceMethods[0].address, (void *)&hkMoveActiveToWorkspace);
+
+    static const auto SpawnMethods = HyprlandAPI::findFunctionsByName(PHANDLE, "spawn");
+    g_pSpawnHook = HyprlandAPI::createFunctionHook(PHANDLE, SpawnMethods[0].address, (void *)&hkSpawn);
+
+    // register pEvent hook
+    if (g_enable_hotarea)
+    {
+      HyprlandAPI::registerCallbackDynamic(PHANDLE, "mouseMove", [&](void *self, SCallbackInfo &info, std::any data)
+                                           { mouseMoveHook(self, info, data); });
+      HyprlandAPI::registerCallbackDynamic(PHANDLE, "mouseButton", [&](void *self, SCallbackInfo &info, std::any data)
+                                           { mouseButtonHook(self, info, data); });
+    }
+    // HyprlandAPI::registerCallbackDynamic(PHANDLE, "mouseAxis", [&](void* self, SCallbackInfo& info, std::any data) { mouseAxisHook(self, info, data); });
+    HyprlandAPI::registerCallbackDynamic(PHANDLE, "keyPress", [&](void *key_event, SCallbackInfo &info, std::any data)
+                                         { keyPressHook(key_event, info, data); });
+
+    // enable function hook
+    if (g_enable_gesture)
+    {
+      g_pOnSwipeBeginHook->hook();
+      g_pOnSwipeEndHook->hook();
+      g_pOnSwipeUpdateHook->hook();
+    }
+
+    // enable auto exit
+    if (g_auto_exit)
+    {
+      g_pOnWindowRemovedTilingHook->hook();
+    }
+  }
