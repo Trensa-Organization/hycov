@@ -1,7 +1,7 @@
 [hyprshell]
 description = "window overview for hyprland"
 version = "0.1"
-author = "killown"
+author = "Killown"
 
 [hyprshell.build]
 output = "build/libhyprshell.so"
@@ -10,3 +10,4 @@ steps = [
   "cmake -DCMAKE_BUILD_TYPE=Debug -B build",
   "cmake --build build"
 ]
+

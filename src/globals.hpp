@@ -10,6 +10,10 @@ inline std::unique_ptr<GridLayout> g_GridLayout;
 
 inline bool g_isOverView;
 inline bool g_isInHotArea;
+inline bool g_isInHotCorner;
+inline bool g_isHotCornerAvailable;
+inline bool g_isInDockArea;
+inline bool g_isInTopBarArea;
 inline int g_enable_hotarea;
 inline int g_enable_mouse_side_button;
 inline int g_enable_mouse_extra_button;
@@ -64,26 +68,27 @@ inline std::string keysym_Control_L = "Control_L";
 inline std::string keysym_Control_R = "Control_R";
 inline std::string keysym_Shift_L = "Shift_L";
 inline std::string keysym_Shift_R = "Shift_R";
+inline std::string keysym_Left = "Left";
+inline std::string keysym_Right = "Right";
+inline std::string keysym_Up = "Up";
+inline std::string keysym_Down = "Down";
 inline bool ModKeyStatus = false;
 
+inline CFunctionHook *g_pOnSwipeBeginHook = nullptr;
+inline CFunctionHook *g_pOnSwipeEndHook = nullptr;
+inline CFunctionHook *g_pOnSwipeUpdateHook = nullptr;
+inline CFunctionHook *g_pOnWindowRemovedTilingHook = nullptr;
+inline CFunctionHook *g_pChangeworkspaceHook = nullptr;
+inline CFunctionHook *g_pMoveActiveToWorkspaceHook = nullptr;
+inline CFunctionHook *g_pSpawnHook = nullptr;
 
-
-inline CFunctionHook* g_pOnSwipeBeginHook = nullptr;
-inline CFunctionHook* g_pOnSwipeEndHook = nullptr;
-inline CFunctionHook* g_pOnSwipeUpdateHook = nullptr;
-inline CFunctionHook* g_pOnWindowRemovedTilingHook = nullptr;
-inline CFunctionHook* g_pChangeworkspaceHook = nullptr;
-inline CFunctionHook* g_pMoveActiveToWorkspaceHook = nullptr;
-inline CFunctionHook* g_pSpawnHook = nullptr;
-
-inline void errorNotif()
-{
-	HyprlandAPI::addNotificationV2(
-		PHANDLE,
-		{
-			{"text", "Something has gone very wrong. Check the log for details."},
-			{"time", (uint64_t)10000},
-			{"color", CColor(1.0, 0.0, 0.0, 1.0)},
-			{"icon", ICON_ERROR},
-		});
+inline void errorNotif() {
+  HyprlandAPI::addNotificationV2(
+      PHANDLE,
+      {
+          {"text", "Something has gone very wrong. Check the log for details."},
+          {"time", (uint64_t)10000},
+          {"color", CColor(1.0, 0.0, 0.0, 1.0)},
+          {"icon", ICON_ERROR},
+      });
 }
