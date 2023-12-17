@@ -72,6 +72,7 @@ inline std::string keysym_Left = "Left";
 inline std::string keysym_Right = "Right";
 inline std::string keysym_Up = "Up";
 inline std::string keysym_Down = "Down";
+inline std::string keysym_space = "space";
 inline bool ModKeyStatus = false;
 
 inline CFunctionHook *g_pOnSwipeBeginHook = nullptr;

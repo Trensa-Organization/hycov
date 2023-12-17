@@ -123,10 +123,11 @@ static void DockArea(int x_root, int y_root) {
   auto m_x = pMonitor->vecPosition.x;
   auto m_y = pMonitor->vecPosition.y;
 
-  std::clog << (x_root) << std::endl;
-  std::clog << (y_root) << std::endl;
+  // std::clog << (x_root) << std::endl;
+  // std::clog << (y_root) << std::endl;
 
-  if (y_root > 1000) {
+  if (y_root > 1000 || y_root < 80 || (x_root > 1920 && x_root < 2000) ||
+      (x_root > 4400)) {
     g_isInDockArea = true;
   } else {
     g_isInDockArea = false;
@@ -140,14 +141,37 @@ static void TopBarArea(int x_root, int y_root) {
   auto m_x = pMonitor->vecPosition.x;
   auto m_y = pMonitor->vecPosition.y;
 
-  std::clog << (x_root) << std::endl;
-  std::clog << (y_root) << std::endl;
+  // std::clog << (x_root) << std::endl;
+  // std::clog << (y_root) << std::endl;
 
   if (y_root >= 0 && y_root < 80) {
     g_isInTopBarArea = true;
   } else {
     g_isInTopBarArea = false;
   }
+}
+
+// reserve right bar area for mouse clicks
+static void LeftBarArea(int x_root, int y_root) {
+  CMonitor *pMonitor = g_pCompositor->m_pLastMonitor;
+
+  auto m_x = pMonitor->vecPosition.x;
+  auto m_y = pMonitor->vecPosition.y;
+
+  if (x_root > 2500 && y_root < 1080) {
+    g_isInTopBarArea = true;
+    // HotCornerActivation();
+    // HyprlandAPI::invokeHyprctlCommand("dispatch", "exec wlrctl pointer move
+    // 4");
+    //  std::clog << (y_root) << std::endl;
+    //  std::clog << (x_root) << std::endl;
+    //  std::clog << (pMonitor->output->height) << std::endl;
+    //  std::clog << (pMonitor->output->width) << std::endl;
+  }
+  // leave the hotcorner are will make the toggle overview available again
+  // if (y_root > 10 && y_root < 20) {
+  //  g_isHotCornerAvailable = true;
+  //}
 }
 
 int timestamp() {
@@ -267,9 +291,7 @@ void moveActiveToWorkspace(std::string args) {
 static void mouseMoveHook(void *, SCallbackInfo &info, std::any data) {
 
   const Vector2D coordinate = std::any_cast<const Vector2D>(data);
-  HotCornerToggleOverviewArea(coordinate.x, coordinate.y);
   DockArea(coordinate.x, coordinate.y);
-  TopBarArea(coordinate.x, coordinate.y);
 }
 
 static void mouseButtonHook(void *, SCallbackInfo &info, std::any data) {
@@ -465,11 +487,14 @@ static void keyPressHook(void *key_event, SCallbackInfo &info, std::any data) {
                            keysym_P, keysym_Q, keysym_R, keysym_S, keysym_T,
                            keysym_U, keysym_V, keysym_X, keysym_Y, keysym_Z};
 
-    bool start_menu = (std::find(menu_keys.begin(), menu_keys.end(), KEYNAME) !=
-                       menu_keys.end());
+    // bool start_menu = (std::find(menu_keys.begin(), menu_keys.end(), KEYNAME)
+    // !=
+    //                    menu_keys.end());
+    bool start_menu = (KEYNAME == keysym_space);
     if (start_menu && ModKeystate == false) {
-      const auto drawer = std::format(
-          "exec nwg-drawer -wm hyprland -c 8 -k -search {}", KEYNAME);
+      // const auto drawer = std::format(
+      //     "exec nwg-drawer -wm hyprland -c 8 -k -search {}", KEYNAME);
+      const auto drawer = "exec nwg-drawer -wm hyprland -c 8 -k";
       HyprlandAPI::invokeHyprctlCommand("dispatch", drawer);
       dispatch_toggleoverview("");
     }
