@@ -304,6 +304,7 @@ static void mouseButtonHook(void *, SCallbackInfo &info, std::any data) {
     if (g_isOverView && pEvent->state == WLR_BUTTON_PRESSED &&
         g_isInDockArea == false) {
       dispatch_toggleoverview("");
+      HyprlandAPI::invokeHyprctlCommand("dispatch", "fullscreen 1");
       info.cancelled = true;
     }
     break;
