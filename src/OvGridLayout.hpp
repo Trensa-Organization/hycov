@@ -1,10 +1,9 @@
 #pragma once
 
-#include <hyprland/src/layout/IHyprLayout.hpp>
 #include <hyprland/src/SharedDefs.hpp>
+#include <hyprland/src/layout/IHyprLayout.hpp>
 
-struct SOvGridNodeData
-{
+struct SOvGridNodeData {
   CWindow *pWindow = nullptr;
   int ovbk_windowWorkspaceId = -1;
   std::string ovbk_windowWorkspaceName;
@@ -12,7 +11,7 @@ struct SOvGridNodeData
   std::string workspaceName;
   bool ovbk_windowIsFloating = false;
   bool ovbk_windowIsFullscreen = false;
-  eFullscreenMode ovbk_windowFullscreenMode ;
+  eFullscreenMode ovbk_windowFullscreenMode;
   Vector2D ovbk_position;
   Vector2D ovbk_size;
   Vector2D position;
@@ -23,38 +22,34 @@ struct SOvGridNodeData
   bool ovbk_windowIsWithShadow;
   bool isInOldLayout = false;
   bool isGroupActive = false;
-  CWindow* pGroupPrevWindow = nullptr;
-  CWindow* pGroupNextWindow = nullptr;
+  CWindow *pGroupPrevWindow = nullptr;
+  CWindow *pGroupNextWindow = nullptr;
 
   int workspaceID = -1;
 
-  bool operator==(const SOvGridNodeData &rhs) const
-  {
+  bool operator==(const SOvGridNodeData &rhs) const {
     return pWindow == rhs.pWindow;
   }
 };
 
-
-struct SOldLayoutRecordNodeData
-{
+struct SOldLayoutRecordNodeData {
   CWindow *pWindow = nullptr;
-  bool operator==(const SOldLayoutRecordNodeData &rhs) const
-  {
+  bool operator==(const SOldLayoutRecordNodeData &rhs) const {
     return pWindow == rhs.pWindow;
   }
 };
 
-
-class OvGridLayout : public IHyprLayout
-{
+class OvGridLayout : public IHyprLayout {
 public:
-  virtual void onWindowCreatedTiling(CWindow *, eDirection direction = DIRECTION_DEFAULT);
+  virtual void onWindowCreatedTiling(CWindow *,
+                                     eDirection direction = DIRECTION_DEFAULT);
   virtual void onWindowRemovedTiling(CWindow *);
   virtual bool isWindowTiled(CWindow *);
-  virtual CWindow* getNextWindowCandidate(CWindow*);
+  virtual CWindow *getNextWindowCandidate(CWindow *);
   virtual void recalculateMonitor(const int &);
   virtual void recalculateWindow(CWindow *);
-  virtual void resizeActiveWindow(const Vector2D &, eRectCorner corner, CWindow *pWindow = nullptr);
+  virtual void resizeActiveWindow(const Vector2D &, eRectCorner corner,
+                                  CWindow *pWindow = nullptr);
   virtual void fullscreenRequestForWindow(CWindow *, eFullscreenMode, bool);
   virtual std::any layoutMessage(SLayoutMessageHeader, std::string);
   virtual SWindowRenderLayoutHints requestRenderHints(CWindow *);
@@ -72,10 +67,11 @@ public:
   SOldLayoutRecordNodeData *getOldLayoutRecordNodeFromWindow(CWindow *);
   void resizeNodeSizePos(SOvGridNodeData *, int, int, int, int);
   void moveWindowToWorkspaceSilent(CWindow *, const int &);
-  std::list<SOvGridNodeData> m_lOvGridNodesData; 
-  std::list<SOldLayoutRecordNodeData> m_lSOldLayoutRecordNodeData; 
+  std::list<SOvGridNodeData> m_lOvGridNodesData;
+  std::list<SOldLayoutRecordNodeData> m_lSOldLayoutRecordNodeData;
   void moveWindowToSourceWorkspace();
   void changeToActivceSourceWorkspace();
   void removeOldLayoutData(CWindow *pWindow);
+
 private:
 };
