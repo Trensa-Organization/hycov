@@ -1,10 +1,6 @@
 # hycov
 A Hyprland overview mode plugin, a new tiling WM workflow.  
 
-> [!NOTE]
-> Sorry guys, because I've been using my own Hyprland branch and the features have been sufficient for me.
-> If hyprland comes up with features that surprise me, maybe I'll come back, but I don't have time to keep track of his every commit right now, so I decided to stop it temporarily.
-
 ### What can it do?
 - Hycov can tile all of your windows in a single workspace via grid layout.
 
@@ -21,6 +17,15 @@ https://github.com/DreamMaoMao/hycov/assets/30348075/59121362-21a8-4143-be95-72c
 
 Anyone is welcome to fork. If you end up improving the plugin, please let me know, and I'll be happy to use your fork.
 
+### Using hyprpm:
+
+```shell
+hyprpm update
+hyprpm add https://github.com/DreamMaoMao/hycov
+hyprpm enable hycov
+```
+
+
 ### Manual Installation
 
 > [!NOTE]
@@ -28,30 +33,12 @@ Anyone is welcome to fork. If you end up improving the plugin, please let me kno
 > 2. Only supports hyprland source code after 2023-10-22, because the plugin requires this [commit](https://github.com/hyprwm/Hyprland/commit/a61eb7694df25a75f45502ed64b1536fda370c1d) in [hyprland](https://github.com/hyprwm/Hyprland).
 > 3. Each release of hycov corresponds to each release of hyprland. If you are using a release version of hyprland, but you are using the latest hycov-git, this may not be available. Therefore, hyprland-git is recommended to use hycov-git and hyprland-release is recommended to use the corresponding hycov-release.
 
-##### Using meson and ninja:
-
-```shell
-git clone https://github.com/DreamMaoMao/hycov.git
-cd hycov
-sudo meson setup build --prefix=/usr
-sudo ninja -C build
-sudo ninja -C build install # `libhycov.so` path: /usr/lib/libhycov.so
-```
-
 ##### Using CMake:
 
 ```shell
 git clone https://github.com/DreamMaoMao/hycov.git
 cd hycov
 bash install.sh # `libhycov.so` path: /usr/lib/libhycov.so
-```
-
-##### Using hyprpm:
-
-```shell
-hyprpm update
-hyprpm add https://github.com/DreamMaoMao/hycov
-hyprpm enable hycov
 ```
 
 ### Usage (hyprland.conf)
