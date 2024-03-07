@@ -1,6 +1,9 @@
 # hycov
 A Hyprland overview mode plugin, a new tiling WM workflow.  
 
+## Disclaimer!
+Must use tagged Hyprland release v0.36.0
+
 ### What can it do?
 - Hycov can tile all of your windows in a single workspace via grid layout.
 
@@ -28,17 +31,13 @@ hyprpm enable hycov
 
 ### Manual Installation
 
-> [!NOTE]
-> 1. After Hycov is installed, you will need to logout, then log back in. This may happen automatically, but do not worry. This behaviour is normal.
-> 2. Only supports hyprland source code after 2023-10-22, because the plugin requires this [commit](https://github.com/hyprwm/Hyprland/commit/a61eb7694df25a75f45502ed64b1536fda370c1d) in [hyprland](https://github.com/hyprwm/Hyprland).
-> 3. Each release of hycov corresponds to each release of hyprland. If you are using a release version of hyprland, but you are using the latest hycov-git, this may not be available. Therefore, hyprland-git is recommended to use hycov-git and hyprland-release is recommended to use the corresponding hycov-release.
-
-##### Using CMake:
+##### Using Make:
 
 ```shell
 git clone https://github.com/DreamMaoMao/hycov.git
 cd hycov
-bash install.sh # `libhycov.so` path: /usr/lib/libhycov.so
+make all
+sudo make install
 ```
 
 ### Usage (hyprland.conf)
