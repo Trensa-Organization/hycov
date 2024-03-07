@@ -24,7 +24,7 @@ Anyone is welcome to fork. If you end up improving the plugin, please let me kno
 
 ```shell
 hyprpm update
-hyprpm add https://github.com/DreamMaoMao/hycov
+hyprpm add https://github.com/trensa-organization/hycov
 hyprpm enable hycov
 ```
 
@@ -34,7 +34,7 @@ hyprpm enable hycov
 ##### Using Make:
 
 ```shell
-git clone https://github.com/DreamMaoMao/hycov.git
+git clone https://github.com/trensa-organization/hycov.git
 cd hycov
 make all
 sudo make install
@@ -183,7 +183,7 @@ alt_replace_key = code:133 # use `xev` command to get keycode
     hyprland.url = "github:hyprwm/Hyprland";
 
     hycov={
-      url = "github:DreamMaoMao/hycov";
+      url = "github:trensa-organization/hycov";
       inputs.hyprland.follows = "hyprland";
     };
   };
